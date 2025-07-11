@@ -1,0 +1,41 @@
+﻿using BDSS.Services.Authentication;
+using BDSS.Services.Authentication.Hash;
+using BDSS.Services.Authentication.Token;
+using BDSS.Services.Blog;
+using BDSS.Services.BloodExport;
+using BDSS.Services.BloodImport;
+using BDSS.Services.Event;
+using BDSS.Services.BloodStorage;
+using BDSS.Services.BloodDonationApplication;
+using BDSS.Services.BloodRequestApplication;
+using Microsoft.AspNetCore.Identity;
+using BDSS.Models.Entities;
+
+
+namespace BDSS.APIs.Configuration;
+
+internal static class ServiceConfig
+{
+    public static void Configure(IServiceCollection services)
+    {
+        RegisterServices(services);
+    }
+
+    private static void RegisterServices(IServiceCollection services)
+    {
+        // Authentication services
+        services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        services.AddScoped<IPasswordHashingService, PasswordHashingService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<ITokenService, JwtService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IBlogService, BlogService>();
+        services.AddScoped<IBloodExportService, BloodExportService>();
+        services.AddScoped<IBloodImportService, BloodImportService>();
+        services.AddScoped<IEventService, EventService>();
+        services.AddScoped<IBloodStorageService, BloodStorageService>();
+        services.AddScoped<IBloodDonationApplicationService, BloodDonationApplicationService>();
+        services.AddScoped<IBloodRequestApplicationService, BloodRequestApplicationService>();
+
+    }
+}

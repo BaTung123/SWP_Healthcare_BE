@@ -1,0 +1,6 @@
+@BDSS.APIs_HostAddress = http://localhost:5195
+
+GET {{BDSS.APIs_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

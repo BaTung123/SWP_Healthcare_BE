@@ -1,0 +1,50 @@
+﻿###############################################
+# Visual Studio & .NET Build Ignore Template
+###############################################
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+*.cache
+*.log
+
+# Visual Studio working folder
+.vs/
+
+# File index and cache
+*.v2
+*.vsidx
+*.dbmdl
+*.bak
+*.tmp
+
+# ASP.NET temporary files
+**/App_Data/
+**/App_Start/
+**/App_Code/
+**/Generated_Code/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+project.assets.json
+
+# Others
+*.DS_Store
+Thumbs.db
+/BloodDonationSupportSystem/BDSS.Models/appsettings.Development.json
+/BloodDonationSupportSystem/BDSS.Models/appsettings.json
+/BloodDonationSupportSystem/BDSS.APIs/appsettings.json
