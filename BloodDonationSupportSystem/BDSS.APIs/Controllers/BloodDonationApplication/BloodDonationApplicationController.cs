@@ -28,7 +28,7 @@ public class BloodDonationApplicationController : ControllerBase
         return StatusCode(result.Code, result);
     }
 
-    [HttpGet("user/{id}")]
+    [HttpGet("user/{userId}")]
     public async Task<IActionResult> GetByUserId(long userId)
     {
         var result = await _service.GetBloodDonationApplicationByUserIdAsync(userId);

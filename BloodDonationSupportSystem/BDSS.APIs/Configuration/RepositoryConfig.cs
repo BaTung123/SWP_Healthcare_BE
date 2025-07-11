@@ -9,6 +9,7 @@ using BDSS.Repositories.UserRepository;
 using BDSS.Repositories.BloodStorageRepository;
 using BDSS.Repositories.BloodDonationApplicationRepository;
 using BDSS.Repositories.BloodRequestApplicationRepository;
+using BDSS.Repositories.UserEventsRepository;
 
 namespace BDSS.APIs.Configuration;
 
@@ -26,6 +27,7 @@ internal static class RepositoryConfig
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserOtpRepository, UserOtpRepository>();
         services.AddScoped<IBlogRepository, BlogRepository>();
+        services.AddScoped<IUserEventsRepository, UserEventsRepository>();
         services.AddScoped<IBloodExportRepository, BloodExportRepository>();
         services.AddScoped<IBloodImportRepository, BloodImportRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
