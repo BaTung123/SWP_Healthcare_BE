@@ -1,0 +1,14 @@
+using BDSS.Common.Enums;
+
+namespace BDSS.Models.Entities
+{
+    public class BloodExport : GenericModel
+    {
+        public long BloodStorageId { get; set; }
+        public long? BloodRequestApplicationId { get; set; }
+        public string Note { get; set; } = string.Empty;
+        public BloodExportStatus Status { get; set; } = BloodExportStatus.Pending;
+        public virtual BloodStorage BloodStorage { get; set; } = null!;
+        public virtual BloodRequestApplication? BloodRequestApplication { get; set; }
+    }
+}

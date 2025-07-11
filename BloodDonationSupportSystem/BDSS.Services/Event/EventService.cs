@@ -1,0 +1,164 @@
+using BDSS.DTOs;
+using BDSS.DTOs.Event;
+using BDSS.Repositories.EventRepository;
+
+namespace BDSS.Services.Event;
+
+public class EventService : IEventService
+{
+    private readonly IEventRepository _eventRepository;
+    public EventService(IEventRepository eventRepository)
+    {
+        _eventRepository = eventRepository;
+    }
+
+    public async Task<BaseResponseModel<GetAllEventsResponse>> GetAllEventsAsync()
+    {
+        try
+        {
+            var events = await _eventRepository.GetAllAsync();
+            var response = new GetAllEventsResponse
+            {
+                Events = events.Select(e => new EventDto
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Type = e.Type,
+                    LocationName = e.LocationName,
+                    LocationAddress = e.LocationAddress,
+                    TargetParticipant = e.TargetParticipant,
+                    Status = e.Status,
+                    CreatedAt = e.CreatedAt,
+                    UpdatedAt = e.UpdatedAt
+                })
+            };
+            return new BaseResponseModel<GetAllEventsResponse> { Code = 200, Data = response };
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponseModel<GetAllEventsResponse> { Code = 500, Message = ex.Message };
+        }
+    }
+
+    public async Task<BaseResponseModel<EventDto>> GetEventByIdAsync(long id)
+    {
+        try
+        {
+            var ev = await _eventRepository.GetByIdAsync(id);
+            if (ev == null)
+                return new BaseResponseModel<EventDto> { Code = 404, Message = "Event not found" };
+            var dto = new EventDto
+            {
+                Id = ev.Id,
+                Name = ev.Name,
+                Type = ev.Type,
+                LocationName = ev.LocationName,
+                LocationAddress = ev.LocationAddress,
+                TargetParticipant = ev.TargetParticipant,
+                Status = ev.Status,
+                CreatedAt = ev.CreatedAt,
+                UpdatedAt = ev.UpdatedAt
+            };
+            return new BaseResponseModel<EventDto> { Code = 200, Data = dto };
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponseModel<EventDto> { Code = 500, Message = ex.Message };
+        }
+    }
+
+    public async Task<BaseResponseModel<EventDto>> CreateEventAsync(CreateEventRequest request)
+    {
+        try
+        {
+            var ev = new Models.Entities.Event
+            {
+                Name = request.Name,
+                Type = request.Type,
+                LocationName = request.LocationName,
+                LocationAddress = request.LocationAddress,
+                TargetParticipant = request.TargetParticipant,
+                Status = request.Status
+            };
+            var created = await _eventRepository.AddAsync(ev);
+            var dto = new EventDto
+            {
+                Id = created.Id,
+                Name = created.Name,
+                Type = created.Type,
+                LocationName = created.LocationName,
+                LocationAddress = created.LocationAddress,
+                TargetParticipant = created.TargetParticipant,
+                Status = created.Status,
+                CreatedAt = created.CreatedAt,
+                UpdatedAt = created.UpdatedAt
+            };
+            return new BaseResponseModel<EventDto> { Code = 201, Data = dto };
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponseModel<EventDto> { Code = 500, Message = ex.Message };
+        }
+    }
+
+    public async Task<BaseResponseModel<EventDto>> UpdateEventAsync(UpdateEventRequest request)
+    {
+        try
+        {
+            var ev = await _eventRepository.GetByIdAsync(request.Id);
+            if (ev == null)
+                return new BaseResponseModel<EventDto> { Code = 404, Message = "Event not found" };
+            if (!IsValidStatusTransition(ev.Status, request.Status))
+            {
+                return new BaseResponseModel<EventDto> { Code = 400, Message = "Invalid status transition." };
+            }
+            ev.Name = request.Name;
+            ev.Type = request.Type;
+            ev.LocationName = request.LocationName;
+            ev.LocationAddress = request.LocationAddress;
+            ev.TargetParticipant = request.TargetParticipant;
+            ev.Status = request.Status;
+            await _eventRepository.UpdateAsync(ev);
+            var dto = new EventDto
+            {
+                Id = ev.Id,
+                Name = ev.Name,
+                Type = ev.Type,
+                LocationName = ev.LocationName,
+                LocationAddress = ev.LocationAddress,
+                TargetParticipant = ev.TargetParticipant,
+                Status = ev.Status,
+                CreatedAt = ev.CreatedAt,
+                UpdatedAt = ev.UpdatedAt
+            };
+            return new BaseResponseModel<EventDto> { Code = 200, Data = dto };
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponseModel<EventDto> { Code = 500, Message = ex.Message };
+        }
+    }
+
+    public async Task<BaseResponseModel<bool>> DeleteEventAsync(long id)
+    {
+        try
+        {
+            var ev = await _eventRepository.GetByIdAsync(id);
+            if (ev == null)
+                return new BaseResponseModel<bool> { Code = 404, Message = "Event not found", Data = false };
+            await _eventRepository.DeleteAsync(id);
+            return new BaseResponseModel<bool> { Code = 200, Data = true };
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponseModel<bool> { Code = 500, Message = ex.Message, Data = false };
+        }
+    }
+
+    private static bool IsValidStatusTransition(BDSS.Common.Enums.EventStatus current, BDSS.Common.Enums.EventStatus next)
+    {
+        return (current == BDSS.Common.Enums.EventStatus.ComingSoon && (next == BDSS.Common.Enums.EventStatus.OnGoing || next == BDSS.Common.Enums.EventStatus.Cancelled))
+            || (current == BDSS.Common.Enums.EventStatus.OnGoing && (next == BDSS.Common.Enums.EventStatus.Ended || next == BDSS.Common.Enums.EventStatus.Cancelled))
+            || (current == next && (current == BDSS.Common.Enums.EventStatus.Ended || current == BDSS.Common.Enums.EventStatus.Cancelled));
+    }
+}
