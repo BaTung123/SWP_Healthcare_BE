@@ -116,12 +116,14 @@ public class BloodImportService : IBloodImportService
         try
         {
             var bloodImport = await _bloodImportRepository.GetByIdAsync(request.Id);
-            var bloodDonationApp = await _bloodDonationApplicationRepository.GetByIdAsync(bloodImport.BloodDonationApplicationId.Value);
-            var bloodStorage = await _bloodStorageRepository.GetByIdAsync(bloodImport.BloodStorageId);
             if (bloodImport == null)
                 return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood import request not found" };
+            var bloodStorage = await _bloodStorageRepository.GetByIdAsync(bloodImport.BloodStorageId);
             if (bloodStorage == null)
                 return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood storage not found" };
+            var bloodDonationApp = await _bloodDonationApplicationRepository.GetByIdAsync(bloodImport.BloodDonationApplicationId.Value);
+            if (bloodDonationApp == null)
+                return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood donation application not found" };
             if (!IsValidStatusTransition(bloodImport.Status, request.Status))
             {
                 return new BaseResponseModel<BloodImportDto> { Code = 400, Message = "Invalid status transition." };

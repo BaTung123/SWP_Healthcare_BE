@@ -5,18 +5,21 @@ using BDSS.Repositories.BloodDonationApplicationRepository;
 using BDSS.Common.Enums;
 using BDSS.Repositories.GenericRepository;
 using BDSS.Repositories.UserEventsRepository;
+using BDSS.Repositories.BloodStorageRepository;
 
 namespace BDSS.Services.BloodDonationApplication;
 
 public class BloodDonationApplicationService : IBloodDonationApplicationService
 {
     private readonly IBloodDonationApplicationRepository _repository;
-
+    private readonly IBloodStorageRepository _bloodStorageRepository;
     private readonly IUserEventsRepository _userEventsRepository;
-    public BloodDonationApplicationService(IBloodDonationApplicationRepository repository, IUserEventsRepository userEventsRepository)
+    public BloodDonationApplicationService(IBloodDonationApplicationRepository repository, IUserEventsRepository userEventsRepository, IBloodStorageRepository bloodStorageRepository)
     {
         _repository = repository;
         _userEventsRepository = userEventsRepository;
+        _bloodStorageRepository = bloodStorageRepository;
+
     }
 
     public async Task<BaseResponseModel<GetAllBloodDonationApplicationsResponse>> GetAllBloodDonationApplicationsAsync()
@@ -49,25 +52,28 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
 
     public async Task<BaseResponseModel<BloodDonationApplicationDto>> CreateBloodDonationApplicationAsync(CreateBloodDonationApplicationRequest request)
     {
-        // Basic validation
-        if (string.IsNullOrWhiteSpace(request.FullName) || request.Quantity <= 0)
+        var bloodStorage = await _bloodStorageRepository.GetByBloodTypeAsync(request.BloodType);
+        if (bloodStorage == null)
         {
-            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 400, Message = "FullName and Quantity are required." };
+            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "Blood storage not found" };
         }
+
         var entity = new BDSS.Models.Entities.BloodDonationApplication
         {
-            BloodStorageId = request.BloodStorageId,
+            BloodStorageId = bloodStorage.Id,
+            UserId = request.UserId,
+            EventId = request.EventId,
             FullName = request.FullName,
             Dob = request.Dob,
             Gender = request.Gender,
             BloodType = request.BloodType,
             BloodTransferType = request.BloodTransferType,
             Status = BloodDonationStatus.Pending,
-            Quantity = request.Quantity.HasValue ? request.Quantity.Value : 0,
+            Quantity = request.Quantity.Value,
             Note = request.Note,
             PhoneNumber = request.PhoneNumber,
-            DonationStartDate = request.DonationStartDate ?? DateOnly.FromDateTime(DateTime.Now),
-            DonationEndDate = request.DonationEndDate ?? DateOnly.MinValue
+            DonationStartDate = request.DonationStartDate,
+            DonationEndDate = request.DonationEndDate
         };
         var created = await _repository.AddAsync(entity);
         return new BaseResponseModel<BloodDonationApplicationDto> { Code = 201, Data = ToDto(created) };
@@ -88,8 +94,33 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
         entity.Status = request.Status;
         await _repository.UpdateAsync(entity);
 
-        // Advanced logic: If status is Donated, update UserEvents
-        // (Removed: now handled in BloodImportService)
+        return new BaseResponseModel<BloodDonationApplicationDto> { Code = 200, Data = ToDto(entity) };
+    }
+
+    public async Task<BaseResponseModel<BloodDonationApplicationDto>> UpdateBloodDonationApplicationAsync(UpdateBloodDonationApplicationRequest request)
+    {
+        var bloodStorage = await _bloodStorageRepository.GetByBloodTypeAsync(request.BloodType);
+        if (bloodStorage == null)
+        {
+            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "Blood storage not found" };
+        }
+        var entity = await _repository.GetByIdAsync(request.Id);
+        if (entity == null)
+        {
+            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "Not found" };
+        }
+        entity.BloodStorageId = bloodStorage.Id;
+        entity.FullName = request.FullName;
+        entity.Dob = request.Dob;
+        entity.Gender = request.Gender;
+        entity.BloodType = request.BloodType;
+        entity.BloodTransferType = request.BloodTransferType;
+        entity.Quantity = request.Quantity.Value;
+        entity.Note = request.Note;
+        entity.PhoneNumber = request.PhoneNumber;
+        entity.DonationStartDate = request.DonationStartDate;
+        entity.DonationEndDate = request.DonationEndDate;
+        await _repository.UpdateAsync(entity);
         return new BaseResponseModel<BloodDonationApplicationDto> { Code = 200, Data = ToDto(entity) };
     }
 

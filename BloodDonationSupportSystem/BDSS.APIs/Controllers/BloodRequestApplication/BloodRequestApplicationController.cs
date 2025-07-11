@@ -34,4 +34,11 @@ public class BloodRequestApplicationController : ControllerBase
         var result = await _service.CreateBloodRequestApplicationAsync(request);
         return StatusCode(result.Code, result);
     }
+
+    [HttpPut("status")]
+    public async Task<IActionResult> UpdateStatus([FromBody] UpdateBloodRequestApplicationStatusRequest request)
+    {
+        var result = await _service.UpdateBloodRequestApplicationStatusAsync(request);
+        return StatusCode(result.Code, result);
+    }
 }
