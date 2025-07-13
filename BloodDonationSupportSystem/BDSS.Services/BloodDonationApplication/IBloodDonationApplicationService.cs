@@ -10,4 +10,5 @@ public interface IBloodDonationApplicationService
     Task<BaseResponseModel<IEnumerable<BloodDonationApplicationDto>>> GetBloodDonationApplicationByUserIdAsync(long id);
     Task<BaseResponseModel<BloodDonationApplicationDto>> CreateBloodDonationApplicationAsync(CreateBloodDonationApplicationRequest request);
     Task<BaseResponseModel<BloodDonationApplicationDto>> UpdateBloodDonationApplicationStatusAsync(UpdateBloodDonationApplicationStatusRequest request);
+    Task<BaseResponseModel<BloodDonationApplicationDto>> UpdateBloodDonationApplicationAsync(UpdateBloodDonationApplicationRequest request);
 }
