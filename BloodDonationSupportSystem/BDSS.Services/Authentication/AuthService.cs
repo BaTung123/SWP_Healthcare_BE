@@ -919,23 +919,23 @@ public class AuthService : IAuthService
             throw new ArgumentException($"User with ID {request.Id} not found");
         }
         // Validate role
-        if (request.Role != UserRole.Customer)
-        {
-            throw new ArgumentException("Role is invalid");
-        }
+        //if (request.Role != UserRole.Customer)
+        //{
+        //    throw new ArgumentException("Role is invalid");
+        //}
         // Validate CommissionRate
-        if (!request.CommissionRate.HasValue)
-        {
-            throw new ArgumentException("Commission is reqiure");
-        }
-        if (request.CommissionRate.Value < 5)
-        {
-            throw new ArgumentException("commissionRate can not less than 5");
-        }
-        if (request.CommissionRate.Value > 50)
-        {
-            throw new ArgumentException("commissionRate can not greater than 50");
-        }
+        //if (!request.CommissionRate.HasValue)
+        //{
+        //    throw new ArgumentException("Commission is reqiure");
+        //}
+        //if (request.CommissionRate.Value < 5)
+        //{
+        //    throw new ArgumentException("commissionRate can not less than 5");
+        //}
+        //if (request.CommissionRate.Value > 50)
+        //{
+        //    throw new ArgumentException("commissionRate can not greater than 50");
+        //}
 
         user.Role = request.Role;
         user.UpdatedAt = DateTimeUtils.GetCurrentGmtPlus7();
