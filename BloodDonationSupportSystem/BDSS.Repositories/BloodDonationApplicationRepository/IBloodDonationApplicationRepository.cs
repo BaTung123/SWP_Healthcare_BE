@@ -7,4 +7,5 @@ public interface IBloodDonationApplicationRepository : IGenericRepository<BloodD
 {
     Task<BloodDonationApplication?> GetByIdAsync(long id);
     Task<IEnumerable<BloodDonationApplication>> GetByUserIdAsync(long userId);
+    Task<BloodDonationApplication?> GetLatestByUserIdAsync(long userId);
 }

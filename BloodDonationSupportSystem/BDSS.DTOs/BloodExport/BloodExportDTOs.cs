@@ -31,7 +31,8 @@ public class UpdateBloodExportRequest
 public class UpdateBloodExportStatusRequest
 {
     public long Id { get; set; }
-    public BDSS.Common.Enums.BloodExportStatus Status { get; set; }
+    public BloodExportStatus Status { get; set; }
+    public string Note { get; set; } = string.Empty;
 }
 
 public class DeleteBloodExportRequest

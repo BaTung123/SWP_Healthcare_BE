@@ -1,6 +1,5 @@
 using BDSS.DTOs;
 using BDSS.DTOs.BloodStorage;
-using BDSS.Models.Entities;
 using BDSS.Repositories.BloodStorageRepository;
 
 namespace BDSS.Services.BloodStorage;

@@ -1,11 +1,10 @@
-using BDSS.DTOs;
-using BDSS.DTOs.BloodRequestApplication;
-using BDSS.Models.Entities;
-using BDSS.Repositories.BloodRequestApplicationRepository;
 using BDSS.Common.Enums;
 using BDSS.Common.Utils;
-using BDSS.Repositories.BloodStorageRepository;
+using BDSS.DTOs;
+using BDSS.DTOs.BloodRequestApplication;
 using BDSS.Repositories.BloodExportRepository;
+using BDSS.Repositories.BloodRequestApplicationRepository;
+using BDSS.Repositories.BloodStorageRepository;
 
 namespace BDSS.Services.BloodRequestApplication;
 
@@ -94,6 +93,7 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
                 return new BaseResponseModel<BloodRequestApplicationDto> { Code = 400, Message = "Invalid status transition" };
             }
             bloodRequestApp.Status = request.Status;
+            bloodRequestApp.Note = request.Note;
             if (bloodRequestApp.Status == BloodRequestStatus.Received)
             {
                 bloodExport.Status = BloodExportStatus.Exported;

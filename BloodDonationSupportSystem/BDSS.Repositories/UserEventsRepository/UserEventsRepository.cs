@@ -1,7 +1,7 @@
 using BDSS.Models.Context;
 using BDSS.Models.Entities;
-using Microsoft.EntityFrameworkCore;
 using BDSS.Repositories.GenericRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace BDSS.Repositories.UserEventsRepository;
 

@@ -23,6 +23,7 @@ public class UpdateBloodImportStatusRequest
 {
     public long Id { get; set; }
     public BloodImportStatus Status { get; set; }
+    public string Note { get; set; } = string.Empty;
 }
 
 public class UpdateBloodImportRequest

@@ -39,6 +39,7 @@ public class UpdateBloodRequestApplicationStatusRequest
 {
     public long Id { get; set; }
     public BloodRequestStatus Status { get; set; }
+    public string Note { get; set; } = string.Empty;
 }
 
 public class GetAllBloodRequestApplicationsResponse

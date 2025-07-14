@@ -118,6 +118,7 @@ public class BloodExportService : IBloodExportService
                 return new BaseResponseModel<BloodExportDto> { Code = 400, Message = "Invalid status transition." };
             }
             bloodExport.Status = request.Status;
+            bloodExport.Note = request.Note;
             await _bloodExportRepository.UpdateAsync(bloodExport);
 
             // Advanced logic: If status is Exported, update related BloodRequestApplication

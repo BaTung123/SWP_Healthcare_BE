@@ -18,4 +18,12 @@ public class BloodDonationApplicationRepository : GenericRepository<BloodDonatio
     {
         return await Entities.Where(x => x.UserId == userId && !x.IsDeleted).ToListAsync();
     }
+
+    public async Task<BloodDonationApplication?> GetLatestByUserIdAsync(long userId)
+    {
+        return await Entities
+            .Where(x => x.UserId == userId && !x.IsDeleted)
+            .OrderByDescending(x => x.DonationEndDate)
+            .FirstOrDefaultAsync();
+    }
 }

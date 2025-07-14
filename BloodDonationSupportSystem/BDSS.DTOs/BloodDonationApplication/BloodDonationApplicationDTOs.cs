@@ -32,7 +32,6 @@ public class CreateBloodDonationApplicationRequest
     public int? Quantity { get; set; } = 0;
     public string Note { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
-    public DateOnly DonationStartDate { get; set; } = DateOnly.FromDateTime(DateTimeUtils.GetCurrentGmtPlus7());
     public DateOnly DonationEndDate { get; set; } = DateOnly.FromDateTime(DateTimeUtils.GetCurrentGmtPlus7());
 }
 
@@ -40,6 +39,7 @@ public class UpdateBloodDonationApplicationStatusRequest
 {
     public long Id { get; set; }
     public BloodDonationStatus Status { get; set; }
+    public string Note { get; set; } = string.Empty;
 }
 
 public class UpdateBloodDonationApplicationRequest

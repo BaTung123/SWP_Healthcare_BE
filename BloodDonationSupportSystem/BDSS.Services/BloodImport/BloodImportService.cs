@@ -1,9 +1,9 @@
 using BDSS.DTOs;
 using BDSS.DTOs.BloodImport;
-using BDSS.Repositories.BloodImportRepository;
 using BDSS.Repositories.BloodDonationApplicationRepository;
-using BDSS.Repositories.UserEventsRepository;
+using BDSS.Repositories.BloodImportRepository;
 using BDSS.Repositories.BloodStorageRepository;
+using BDSS.Repositories.UserEventsRepository;
 
 namespace BDSS.Services.BloodImport;
 
@@ -129,10 +129,10 @@ public class BloodImportService : IBloodImportService
                 return new BaseResponseModel<BloodImportDto> { Code = 400, Message = "Invalid status transition." };
             }
             bloodImport.Status = request.Status;
+            bloodImport.Note = request.Note;
             bloodStorage.Quantity += bloodDonationApp.Quantity;
             await _bloodImportRepository.UpdateAsync(bloodImport);
 
-            // Advanced logic: If status is Imported, update related BloodDonationApplication and UserEvents
             if (bloodImport.Status == Common.Enums.BloodImportStatus.Imported && bloodImport.BloodDonationApplicationId != null)
             {
                 var donationApp = await _bloodDonationApplicationRepository.GetByIdAsync(bloodImport.BloodDonationApplicationId.Value);

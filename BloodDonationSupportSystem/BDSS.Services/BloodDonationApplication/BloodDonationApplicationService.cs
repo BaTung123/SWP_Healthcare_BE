@@ -1,11 +1,10 @@
+using BDSS.Common.Enums;
+using BDSS.Common.Utils;
 using BDSS.DTOs;
 using BDSS.DTOs.BloodDonationApplication;
-using BDSS.Models.Entities;
 using BDSS.Repositories.BloodDonationApplicationRepository;
-using BDSS.Common.Enums;
-using BDSS.Repositories.GenericRepository;
-using BDSS.Repositories.UserEventsRepository;
 using BDSS.Repositories.BloodStorageRepository;
+using BDSS.Repositories.UserEventsRepository;
 
 namespace BDSS.Services.BloodDonationApplication;
 
@@ -58,6 +57,24 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
             return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "Blood storage not found" };
         }
 
+        // Check if user has a previous donation within the last 3 months
+        if (request.UserId.HasValue)
+        {
+            var lastApplication = await _repository.GetLatestByUserIdAsync(request.UserId.Value);
+            if (lastApplication != null && lastApplication.DonationEndDate != null)
+            {
+                var minNextDonationDate = lastApplication.DonationEndDate.AddMonths(3);
+                if (request.DonationEndDate < minNextDonationDate)
+                {
+                    return new BaseResponseModel<BloodDonationApplicationDto>
+                    {
+                        Code = 400,
+                        Message = $"You must wait at least 3 months between donations. Your last donation was on {lastApplication.DonationEndDate:yyyy-MM-dd}."
+                    };
+                }
+            }
+        }
+
         var entity = new BDSS.Models.Entities.BloodDonationApplication
         {
             BloodStorageId = bloodStorage.Id,
@@ -72,7 +89,7 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
             Quantity = request.Quantity.Value,
             Note = request.Note,
             PhoneNumber = request.PhoneNumber,
-            DonationStartDate = request.DonationStartDate,
+            DonationStartDate = DateOnly.FromDateTime(DateTimeUtils.GetCurrentGmtPlus7()),
             DonationEndDate = request.DonationEndDate
         };
         var created = await _repository.AddAsync(entity);
@@ -92,6 +109,7 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
             return new BaseResponseModel<BloodDonationApplicationDto> { Code = 400, Message = "Invalid status transition." };
         }
         entity.Status = request.Status;
+        entity.Note = request.Note;
         await _repository.UpdateAsync(entity);
 
         return new BaseResponseModel<BloodDonationApplicationDto> { Code = 200, Data = ToDto(entity) };
