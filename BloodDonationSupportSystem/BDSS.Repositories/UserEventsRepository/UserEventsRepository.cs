@@ -15,4 +15,9 @@ public class UserEventsRepository : GenericRepository<UserEvents>, IUserEventsRe
     {
         return await _context.Set<UserEvents>().FirstOrDefaultAsync(ue => ue.UserId == userId && ue.EventId == eventId);
     }
+
+    public async Task<int> CountByEventIdAsync(long eventId)
+    {
+        return await _context.Set<UserEvents>().CountAsync(ue => ue.EventId == eventId && !ue.IsDeleted);
+    }
 }

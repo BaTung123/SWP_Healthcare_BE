@@ -9,6 +9,7 @@ using BDSS.Services.BloodImport;
 using BDSS.Services.BloodRequestApplication;
 using BDSS.Services.BloodStorage;
 using BDSS.Services.Event;
+using BDSS.Services.UserEvents;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -36,6 +37,7 @@ internal static class ServiceConfig
         services.AddScoped<IBloodStorageService, BloodStorageService>();
         services.AddScoped<IBloodDonationApplicationService, BloodDonationApplicationService>();
         services.AddScoped<IBloodRequestApplicationService, BloodRequestApplicationService>();
+        services.AddScoped<IUserEventsService, UserEventsService>();
 
     }
 }

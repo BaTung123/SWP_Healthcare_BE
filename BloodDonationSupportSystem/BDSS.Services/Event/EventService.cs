@@ -188,9 +188,14 @@ public class EventService : IEventService
 
     private static bool IsValidStatusTransition(BDSS.Common.Enums.EventStatus current, BDSS.Common.Enums.EventStatus next)
     {
+        // ComingSoon -> OnGoing, Full, Cancelled
+        // OnGoing -> Full, Ended, Cancelled
+        // Full -> OnGoing, Ended, Cancelled
+        // Ended -> Ended (no change)
+        // Cancelled -> Cancelled (no change)
         return (current == BDSS.Common.Enums.EventStatus.ComingSoon && (next == BDSS.Common.Enums.EventStatus.OnGoing || next == BDSS.Common.Enums.EventStatus.Full || next == BDSS.Common.Enums.EventStatus.Cancelled))
             || (current == BDSS.Common.Enums.EventStatus.OnGoing && (next == BDSS.Common.Enums.EventStatus.Full || next == BDSS.Common.Enums.EventStatus.Ended || next == BDSS.Common.Enums.EventStatus.Cancelled))
-            || (current == BDSS.Common.Enums.EventStatus.Full && (next == BDSS.Common.Enums.EventStatus.Ended || next == BDSS.Common.Enums.EventStatus.Cancelled))
+            || (current == BDSS.Common.Enums.EventStatus.Full && (next == BDSS.Common.Enums.EventStatus.OnGoing || next == BDSS.Common.Enums.EventStatus.Ended || next == BDSS.Common.Enums.EventStatus.Cancelled))
             || (current == next && (current == BDSS.Common.Enums.EventStatus.Ended || current == BDSS.Common.Enums.EventStatus.Cancelled));
     }
 }
