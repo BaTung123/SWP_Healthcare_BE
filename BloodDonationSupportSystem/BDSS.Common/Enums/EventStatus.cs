@@ -4,6 +4,7 @@
     {
         ComingSoon,
         OnGoing,
+        Full,
         Ended,
         Cancelled
     }

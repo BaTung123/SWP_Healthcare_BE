@@ -1,6 +1,7 @@
 namespace BDSS.DTOs.Event;
 
 using BDSS.Common.Enums;
+using BDSS.Common.Utils;
 
 public class EventDto
 {
@@ -10,6 +11,8 @@ public class EventDto
     public string LocationName { get; set; } = string.Empty;
     public string LocationAddress { get; set; } = string.Empty;
     public int TargetParticipant { get; set; }
+    public DateTime EventStartTime { get; set; }
+    public DateTime EventEndTime { get; set; }
     public EventStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
@@ -22,6 +25,8 @@ public class CreateEventRequest
     public string LocationName { get; set; } = string.Empty;
     public string LocationAddress { get; set; } = string.Empty;
     public int TargetParticipant { get; set; }
+    public DateTime EventStartTime { get; set; } = DateTimeUtils.GetCurrentGmtPlus7();
+    public DateTime EventEndTime { get; set; } = DateTimeUtils.GetCurrentGmtPlus7().AddDays(1);
     public EventStatus Status { get; set; }
 }
 
@@ -33,6 +38,8 @@ public class UpdateEventRequest
     public string LocationName { get; set; } = string.Empty;
     public string LocationAddress { get; set; } = string.Empty;
     public int TargetParticipant { get; set; }
+    public DateTime EventStartTime { get; set; }
+    public DateTime EventEndTime { get; set; }
     public EventStatus Status { get; set; }
 }
 

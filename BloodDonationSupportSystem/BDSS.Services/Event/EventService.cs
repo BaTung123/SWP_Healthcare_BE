@@ -1,6 +1,7 @@
 using BDSS.DTOs;
 using BDSS.DTOs.Event;
 using BDSS.Repositories.EventRepository;
+using BDSS.Common.Utils;
 
 namespace BDSS.Services.Event;
 
@@ -27,6 +28,8 @@ public class EventService : IEventService
                     LocationName = e.LocationName,
                     LocationAddress = e.LocationAddress,
                     TargetParticipant = e.TargetParticipant,
+                    EventStartTime = e.EventStartTime,
+                    EventEndTime = e.EventEndTime,
                     Status = e.Status,
                     CreatedAt = e.CreatedAt,
                     UpdatedAt = e.UpdatedAt
@@ -55,6 +58,8 @@ public class EventService : IEventService
                 LocationName = ev.LocationName,
                 LocationAddress = ev.LocationAddress,
                 TargetParticipant = ev.TargetParticipant,
+                EventStartTime = ev.EventStartTime,
+                EventEndTime = ev.EventEndTime,
                 Status = ev.Status,
                 CreatedAt = ev.CreatedAt,
                 UpdatedAt = ev.UpdatedAt
@@ -71,6 +76,15 @@ public class EventService : IEventService
     {
         try
         {
+            var now = DateTimeUtils.GetCurrentGmtPlus7();
+            if (request.EventStartTime < now || request.EventEndTime < now)
+            {
+                return new BaseResponseModel<EventDto> { Code = 400, Message = "Event start and end time must be present or future (not in the past)." };
+            }
+            if (request.EventEndTime <= request.EventStartTime)
+            {
+                return new BaseResponseModel<EventDto> { Code = 400, Message = "Event end time must be after event start time." };
+            }
             var ev = new Models.Entities.Event
             {
                 Name = request.Name,
@@ -78,6 +92,8 @@ public class EventService : IEventService
                 LocationName = request.LocationName,
                 LocationAddress = request.LocationAddress,
                 TargetParticipant = request.TargetParticipant,
+                EventStartTime = request.EventStartTime,
+                EventEndTime = request.EventEndTime,
                 Status = request.Status
             };
             var created = await _eventRepository.AddAsync(ev);
@@ -89,6 +105,8 @@ public class EventService : IEventService
                 LocationName = created.LocationName,
                 LocationAddress = created.LocationAddress,
                 TargetParticipant = created.TargetParticipant,
+                EventStartTime = created.EventStartTime,
+                EventEndTime = created.EventEndTime,
                 Status = created.Status,
                 CreatedAt = created.CreatedAt,
                 UpdatedAt = created.UpdatedAt
@@ -105,6 +123,15 @@ public class EventService : IEventService
     {
         try
         {
+            var now = DateTimeUtils.GetCurrentGmtPlus7();
+            if (request.EventStartTime < now || request.EventEndTime < now)
+            {
+                return new BaseResponseModel<EventDto> { Code = 400, Message = "Event start and end time must be present or future (not in the past)." };
+            }
+            if (request.EventEndTime <= request.EventStartTime)
+            {
+                return new BaseResponseModel<EventDto> { Code = 400, Message = "Event end time must be after event start time." };
+            }
             var ev = await _eventRepository.GetByIdAsync(request.Id);
             if (ev == null)
                 return new BaseResponseModel<EventDto> { Code = 404, Message = "Event not found" };
@@ -117,6 +144,8 @@ public class EventService : IEventService
             ev.LocationName = request.LocationName;
             ev.LocationAddress = request.LocationAddress;
             ev.TargetParticipant = request.TargetParticipant;
+            ev.EventStartTime = request.EventStartTime;
+            ev.EventEndTime = request.EventEndTime;
             ev.Status = request.Status;
             await _eventRepository.UpdateAsync(ev);
             var dto = new EventDto
@@ -127,6 +156,8 @@ public class EventService : IEventService
                 LocationName = ev.LocationName,
                 LocationAddress = ev.LocationAddress,
                 TargetParticipant = ev.TargetParticipant,
+                EventStartTime = ev.EventStartTime,
+                EventEndTime = ev.EventEndTime,
                 Status = ev.Status,
                 CreatedAt = ev.CreatedAt,
                 UpdatedAt = ev.UpdatedAt
@@ -157,8 +188,9 @@ public class EventService : IEventService
 
     private static bool IsValidStatusTransition(BDSS.Common.Enums.EventStatus current, BDSS.Common.Enums.EventStatus next)
     {
-        return (current == BDSS.Common.Enums.EventStatus.ComingSoon && (next == BDSS.Common.Enums.EventStatus.OnGoing || next == BDSS.Common.Enums.EventStatus.Cancelled))
-            || (current == BDSS.Common.Enums.EventStatus.OnGoing && (next == BDSS.Common.Enums.EventStatus.Ended || next == BDSS.Common.Enums.EventStatus.Cancelled))
+        return (current == BDSS.Common.Enums.EventStatus.ComingSoon && (next == BDSS.Common.Enums.EventStatus.OnGoing || next == BDSS.Common.Enums.EventStatus.Full || next == BDSS.Common.Enums.EventStatus.Cancelled))
+            || (current == BDSS.Common.Enums.EventStatus.OnGoing && (next == BDSS.Common.Enums.EventStatus.Full || next == BDSS.Common.Enums.EventStatus.Ended || next == BDSS.Common.Enums.EventStatus.Cancelled))
+            || (current == BDSS.Common.Enums.EventStatus.Full && (next == BDSS.Common.Enums.EventStatus.Ended || next == BDSS.Common.Enums.EventStatus.Cancelled))
             || (current == next && (current == BDSS.Common.Enums.EventStatus.Ended || current == BDSS.Common.Enums.EventStatus.Cancelled));
     }
 }

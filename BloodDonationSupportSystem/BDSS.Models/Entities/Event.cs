@@ -9,6 +9,8 @@ namespace BDSS.Models.Entities
         public string LocationName { get; set; } = string.Empty;
         public string LocationAddress { get; set; } = string.Empty;
         public int TargetParticipant { get; set; } = 0;
+        public DateTime EventStartTime { get; set; }
+        public DateTime EventEndTime { get; set; }
         public EventStatus Status { get; set; } = EventStatus.ComingSoon;
         public virtual ICollection<UserEvents> UserEvents { get; set; } = new List<UserEvents>();
     }
