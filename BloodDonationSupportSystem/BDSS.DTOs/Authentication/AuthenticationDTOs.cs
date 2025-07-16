@@ -131,6 +131,7 @@ public class UpdateUserInformationRequest
     public string? Gender { get; set; }
     public string? Dob { get; set; }
     public string? PhoneNumber { get; set; }
+    public BloodType? BloodType { get; set; }
 }
 
 public class UpdateUserInformationResponse

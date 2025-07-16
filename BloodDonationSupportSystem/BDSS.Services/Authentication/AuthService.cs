@@ -893,6 +893,7 @@ public class AuthService : IAuthService
             ? DateTime.Parse(request.Dob)
             : user.Dob;
         user.Phone = request.PhoneNumber ?? user.Phone;
+        user.BloodType = request.BloodType ?? user.BloodType;
         user.UpdatedAt = DateTimeUtils.GetCurrentGmtPlus7();
         return user;
     }
