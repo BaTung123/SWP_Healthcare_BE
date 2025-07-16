@@ -45,18 +45,9 @@ public class UpdateBloodDonationApplicationStatusRequest
 public class UpdateBloodDonationApplicationRequest
 {
     public long Id { get; set; }
-    public long? UserId { get; set; }
-    public long? EventId { get; set; }
-    public string? FullName { get; set; } = string.Empty;
-    public DateTime? Dob { get; set; }
-    public string Gender { get; set; } = string.Empty;
     public BloodType BloodType { get; set; } = BloodType.O_Positive;
     public BloodTransferType BloodTransferType { get; set; } = BloodTransferType.WholeBlood;
     public int? Quantity { get; set; } = 0;
-    public string? Note { get; set; } = string.Empty;
-    public string? PhoneNumber { get; set; } = string.Empty;
-    public DateOnly DonationStartDate { get; set; } = DateOnly.FromDateTime(DateTimeUtils.GetCurrentGmtPlus7());
-    public DateOnly DonationEndDate { get; set; } = DateOnly.FromDateTime(DateTimeUtils.GetCurrentGmtPlus7());
 }
 
 public class GetAllBloodDonationApplicationsResponse

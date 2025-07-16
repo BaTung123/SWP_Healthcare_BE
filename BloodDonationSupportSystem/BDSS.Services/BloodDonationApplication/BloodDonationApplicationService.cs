@@ -128,16 +128,9 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
             return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "Not found" };
         }
         entity.BloodStorageId = bloodStorage.Id;
-        entity.FullName = request.FullName;
-        entity.Dob = request.Dob;
-        entity.Gender = request.Gender;
         entity.BloodType = request.BloodType;
         entity.BloodTransferType = request.BloodTransferType;
         entity.Quantity = request.Quantity.Value;
-        entity.Note = request.Note;
-        entity.PhoneNumber = request.PhoneNumber;
-        entity.DonationStartDate = request.DonationStartDate;
-        entity.DonationEndDate = request.DonationEndDate;
         await _repository.UpdateAsync(entity);
         return new BaseResponseModel<BloodDonationApplicationDto> { Code = 200, Data = ToDto(entity) };
     }
