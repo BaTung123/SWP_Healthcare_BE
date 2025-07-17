@@ -102,6 +102,7 @@ public class AuthService : IAuthService
                     Email = user.Email,
                     Dob = user.Dob?.ToString("dd-MM-yyyy") ?? string.Empty,
                     Gender = user.Gender ?? string.Empty,
+                    BloodType = user.BloodType ?? BloodType.O_Negative,
                     AvatarImageUrl = user.AvatarUrl ?? string.Empty,
                     PhoneNumber = user.Phone ?? string.Empty,
                     IsVerified = user.IsVerified
