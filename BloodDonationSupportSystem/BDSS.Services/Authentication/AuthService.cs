@@ -72,6 +72,7 @@ public class AuthService : IAuthService
                         Role = user.Role.ToString(),
                         Status = user.IsBanned ? "Banned" : "Active",
                         CreatedAt = user.CreatedAt.ToString("dd-MM-yyyy"),
+                        BloodType = user.BloodType
                     }).ToList()
                 }
             };

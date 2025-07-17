@@ -15,6 +15,7 @@ public class UsersInfo
     public string Role { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public string CreatedAt { get; set; } = string.Empty;
+    public BDSS.Common.Enums.BloodType? BloodType { get; set; } = null;
 }
 public class GetUserByIdRequest
 {
