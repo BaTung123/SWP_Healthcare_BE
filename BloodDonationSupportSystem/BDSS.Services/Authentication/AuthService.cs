@@ -464,7 +464,7 @@ public class AuthService : IAuthService
             }
             var subject = $"From: {user.Email}. Subject: " + request.Subject;
             var emailSent = await _emailService.SendEmailAsync(
-                "trattrieu.an@gmail.com",
+                "tunghoang5161997@gmail.com",
                 subject,
                 request.Body,
                 request.IsHtml
@@ -873,7 +873,7 @@ public class AuthService : IAuthService
         // Validate Gender
         if (string.IsNullOrWhiteSpace(request.Gender))
             throw new ArgumentException("Gender can not be empty");
-        if (!new[] { "Male", "Female", "Other" }.Contains(request.Gender))
+        if (!new[] { "male", "female", "other" }.Contains(request.Gender))
             throw new ArgumentException("Invalid gender value");
 
         // Validate Dob
