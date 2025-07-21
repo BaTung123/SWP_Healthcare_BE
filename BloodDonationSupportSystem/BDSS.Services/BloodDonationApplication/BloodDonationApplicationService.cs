@@ -153,6 +153,7 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
         {
             Id = entity.Id,
             BloodStorageId = entity.BloodStorageId,
+            EventId = entity.EventId,
             FullName = entity.FullName,
             Dob = entity.Dob,
             Gender = entity.Gender,

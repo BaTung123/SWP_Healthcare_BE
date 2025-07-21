@@ -7,6 +7,7 @@ public class BloodDonationApplicationDto
 {
     public long Id { get; set; }
     public long? BloodStorageId { get; set; }
+    public long? EventId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public DateTime? Dob { get; set; }
     public string Gender { get; set; } = string.Empty;
