@@ -2,6 +2,7 @@ using BDSS.Common.Enums;
 using BDSS.Common.Utils;
 using BDSS.DTOs;
 using BDSS.DTOs.BloodDonationApplication;
+using BDSS.Models.Entities;
 using BDSS.Repositories.BloodDonationApplicationRepository;
 using BDSS.Repositories.BloodStorageRepository;
 using BDSS.Repositories.UserEventsRepository;
@@ -73,6 +74,17 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
                     };
                 }
             }
+        }
+
+        if (request.EventId.HasValue)
+        {
+            var userEvent = new Models.Entities.UserEvents
+            {
+                EventId = request.EventId.Value,
+                UserId = request.UserId.Value,
+                UserEventsStatus = UserEventsStatus.Registered
+            };
+            await _userEventsRepository.AddAsync(userEvent);
         }
 
         var entity = new BDSS.Models.Entities.BloodDonationApplication
