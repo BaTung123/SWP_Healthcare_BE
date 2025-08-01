@@ -8,15 +8,12 @@ namespace BDSS.Repositories.BloodStorageRepository;
 
 public class BloodStorageRepository : GenericRepository<BloodStorage>, IBloodStorageRepository
 {
-    public BloodStorageRepository(BdssDbContext context) : base(context) { }
-
-    public async Task<BloodStorage?> GetByIdAsync(long id)
+    public BloodStorageRepository(BdssDbContext context) : base(context)
     {
-        return await Entities.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
     }
 
-    public async Task<BloodStorage?> GetByBloodTypeAsync(BloodType bloodType)
+    public async Task<BloodStorage?> GetByBloodTypeAsync(BDSS.Common.Enums.BloodType bloodType)
     {
-        return await Entities.FirstOrDefaultAsync(x => x.BloodType == bloodType && !x.IsDeleted);
+        return await Entities.FirstOrDefaultAsync(bs => bs.BloodType == bloodType && !bs.IsDeleted);
     }
 }

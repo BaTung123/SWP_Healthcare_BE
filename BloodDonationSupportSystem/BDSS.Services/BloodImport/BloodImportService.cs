@@ -52,7 +52,7 @@ public class BloodImportService : IBloodImportService
     {
         try
         {
-            var bloodImport = await _bloodImportRepository.GetByIdAsync(id);
+            var bloodImport = await _bloodImportRepository.FindAsync(id);
             if (bloodImport == null)
                 return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "BloodImport not found" };
             var dto = new BloodImportDto
@@ -77,7 +77,7 @@ public class BloodImportService : IBloodImportService
     {
         try
         {
-            var bloodDonationApplication = await _bloodDonationApplicationRepository.GetByIdAsync(request.BloodDonationApplicationId);
+            var bloodDonationApplication = await _bloodDonationApplicationRepository.FindAsync(request.BloodDonationApplicationId);
             var bloodStorage = await _bloodStorageRepository.GetByBloodTypeAsync(bloodDonationApplication.BloodType);
             var bloodImport = new Models.Entities.BloodImport
             {
@@ -115,13 +115,13 @@ public class BloodImportService : IBloodImportService
     {
         try
         {
-            var bloodImport = await _bloodImportRepository.GetByIdAsync(request.Id);
+            var bloodImport = await _bloodImportRepository.FindAsync(request.Id);
             if (bloodImport == null)
                 return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood import request not found" };
-            var bloodStorage = await _bloodStorageRepository.GetByIdAsync(bloodImport.BloodStorageId);
+            var bloodStorage = await _bloodStorageRepository.FindAsync(bloodImport.BloodStorageId);
             if (bloodStorage == null)
                 return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood storage not found" };
-            var bloodDonationApp = await _bloodDonationApplicationRepository.GetByIdAsync(bloodImport.BloodDonationApplicationId.Value);
+            var bloodDonationApp = await _bloodDonationApplicationRepository.FindAsync(bloodImport.BloodDonationApplicationId.Value);
             if (bloodDonationApp == null)
                 return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood donation application not found" };
             if (!IsValidStatusTransition(bloodImport.Status, request.Status))
@@ -135,7 +135,7 @@ public class BloodImportService : IBloodImportService
 
             if (bloodImport.Status == Common.Enums.BloodImportStatus.Imported && bloodImport.BloodDonationApplicationId != null)
             {
-                var donationApp = await _bloodDonationApplicationRepository.GetByIdAsync(bloodImport.BloodDonationApplicationId.Value);
+                var donationApp = await _bloodDonationApplicationRepository.FindAsync(bloodImport.BloodDonationApplicationId.Value);
                 if (donationApp != null)
                 {
                     donationApp.Status = Common.Enums.BloodDonationStatus.Donated;

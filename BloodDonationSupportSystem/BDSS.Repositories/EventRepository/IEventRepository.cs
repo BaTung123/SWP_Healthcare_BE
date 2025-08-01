@@ -5,5 +5,4 @@ namespace BDSS.Repositories.EventRepository;
 
 public interface IEventRepository : IGenericRepository<Event>
 {
-    Task<Event?> GetByIdAsync(long eventId);
 }

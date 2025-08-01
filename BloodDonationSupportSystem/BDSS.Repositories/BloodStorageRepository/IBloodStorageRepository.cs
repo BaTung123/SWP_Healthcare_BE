@@ -6,6 +6,5 @@ namespace BDSS.Repositories.BloodStorageRepository;
 
 public interface IBloodStorageRepository : IGenericRepository<BloodStorage>
 {
-    Task<BloodStorage?> GetByIdAsync(long id);
-    Task<BloodStorage?> GetByBloodTypeAsync(BloodType bloodType);
+    Task<BloodStorage?> GetByBloodTypeAsync(BDSS.Common.Enums.BloodType bloodType);
 }

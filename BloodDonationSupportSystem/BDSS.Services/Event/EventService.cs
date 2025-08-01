@@ -47,7 +47,7 @@ public class EventService : IEventService
     {
         try
         {
-            var ev = await _eventRepository.GetByIdAsync(id);
+            var ev = await _eventRepository.FindAsync(id);
             if (ev == null)
                 return new BaseResponseModel<EventDto> { Code = 404, Message = "Event not found" };
             var dto = new EventDto
@@ -132,7 +132,7 @@ public class EventService : IEventService
             {
                 return new BaseResponseModel<EventDto> { Code = 400, Message = "Event end time must be after event start time." };
             }
-            var ev = await _eventRepository.GetByIdAsync(request.Id);
+            var ev = await _eventRepository.FindAsync(request.Id);
             if (ev == null)
                 return new BaseResponseModel<EventDto> { Code = 404, Message = "Event not found" };
             if (!IsValidStatusTransition(ev.Status, request.Status))
@@ -174,7 +174,7 @@ public class EventService : IEventService
     {
         try
         {
-            var ev = await _eventRepository.GetByIdAsync(id);
+            var ev = await _eventRepository.FindAsync(id);
             if (ev == null)
                 return new BaseResponseModel<bool> { Code = 404, Message = "Event not found", Data = false };
             await _eventRepository.DeleteAsync(id);

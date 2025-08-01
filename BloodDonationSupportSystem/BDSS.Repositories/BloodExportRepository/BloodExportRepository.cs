@@ -7,15 +7,12 @@ namespace BDSS.Repositories.BloodExportRepository;
 
 public class BloodExportRepository : GenericRepository<BloodExport>, IBloodExportRepository
 {
-    public BloodExportRepository(BdssDbContext context) : base(context) { }
-
-    public async Task<BloodExport?> GetByIdAsync(long bloodExportId)
+    public BloodExportRepository(BdssDbContext context) : base(context)
     {
-        return await Entities.FirstOrDefaultAsync(b => b.Id == bloodExportId && !b.IsDeleted);
     }
 
     public async Task<BloodExport?> GetByBloodRequestApplicationIdAsync(long bloodRequestApplicationId)
     {
-        return await Entities.FirstOrDefaultAsync(b => b.BloodRequestApplicationId == bloodRequestApplicationId && !b.IsDeleted);
+        return await Entities.FirstOrDefaultAsync(be => be.BloodRequestApplicationId == bloodRequestApplicationId && !be.IsDeleted);
     }
 }

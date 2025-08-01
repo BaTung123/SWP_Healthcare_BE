@@ -6,6 +6,7 @@ using BDSS.Repositories.BloodImportRepository;
 using BDSS.Repositories.BloodRequestApplicationRepository;
 using BDSS.Repositories.BloodStorageRepository;
 using BDSS.Repositories.EventRepository;
+using BDSS.Repositories.HealthCheckRepository;
 using BDSS.Repositories.UserEventsRepository;
 using BDSS.Repositories.UserOtpRepository;
 using BDSS.Repositories.UserRepository;
@@ -33,5 +34,6 @@ internal static class RepositoryConfig
         services.AddScoped<IBloodStorageRepository, BloodStorageRepository>();
         services.AddScoped<IBloodDonationApplicationRepository, BloodDonationApplicationRepository>();
         services.AddScoped<IBloodRequestApplicationRepository, BloodRequestApplicationRepository>();
+        services.AddScoped<IHealthCheckRepository, HealthCheckRepository>();
     }
 }

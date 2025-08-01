@@ -45,7 +45,7 @@ public class BloodExportService : IBloodExportService
     {
         try
         {
-            var bloodExport = await _bloodExportRepository.GetByIdAsync(id);
+            var bloodExport = await _bloodExportRepository.FindAsync(id);
             if (bloodExport == null)
                 return new BaseResponseModel<BloodExportDto> { Code = 404, Message = "BloodExport not found" };
             var dto = new BloodExportDto
@@ -70,7 +70,7 @@ public class BloodExportService : IBloodExportService
     {
         try
         {
-            var existingRequestApp = await _bloodRequestApplicationRepository.GetByIdAsync(request.BloodRequestApplicationId.Value);
+            var existingRequestApp = await _bloodRequestApplicationRepository.FindAsync(request.BloodRequestApplicationId.Value);
             if (existingRequestApp == null)
                 return new BaseResponseModel<BloodExportDto> { Code = 404, Message = "BloodRequestApplication not found" };
             var bloodExport = new Models.Entities.BloodExport
@@ -109,7 +109,7 @@ public class BloodExportService : IBloodExportService
     {
         try
         {
-            var bloodExport = await _bloodExportRepository.GetByIdAsync(request.Id);
+            var bloodExport = await _bloodExportRepository.FindAsync(request.Id);
             if (bloodExport == null)
                 return new BaseResponseModel<BloodExportDto> { Code = 404, Message = "BloodExport not found" };
 
@@ -124,7 +124,7 @@ public class BloodExportService : IBloodExportService
             // Advanced logic: If status is Exported, update related BloodRequestApplication
             if (bloodExport.Status == BDSS.Common.Enums.BloodExportStatus.Exported && bloodExport.BloodRequestApplicationId != null)
             {
-                var requestApp = await _bloodRequestApplicationRepository.GetByIdAsync(bloodExport.BloodRequestApplicationId.Value);
+                var requestApp = await _bloodRequestApplicationRepository.FindAsync(bloodExport.BloodRequestApplicationId.Value);
                 if (requestApp != null)
                 {
                     requestApp.Status = BDSS.Common.Enums.BloodRequestStatus.Received;

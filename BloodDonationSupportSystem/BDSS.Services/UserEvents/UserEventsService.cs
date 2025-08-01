@@ -31,7 +31,7 @@ public class UserEventsService : IUserEventsService
             };
         }
 
-        var eventEntity = await _eventRepository.GetByIdAsync(request.EventId);
+        var eventEntity = await _eventRepository.FindAsync(request.EventId);
         if (eventEntity == null)
         {
             return new BaseResponseModel<RegisterUserToEventResponse>

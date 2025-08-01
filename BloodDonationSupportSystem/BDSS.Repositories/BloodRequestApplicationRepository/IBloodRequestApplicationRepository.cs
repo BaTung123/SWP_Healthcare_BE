@@ -5,5 +5,5 @@ namespace BDSS.Repositories.BloodRequestApplicationRepository;
 
 public interface IBloodRequestApplicationRepository : IGenericRepository<BloodRequestApplication>
 {
-    Task<BloodRequestApplication?> GetByIdAsync(long id);
+
 }

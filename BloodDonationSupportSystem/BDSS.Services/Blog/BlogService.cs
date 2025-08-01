@@ -41,7 +41,7 @@ public class BlogService : IBlogService
     {
         try
         {
-            var blog = await _blogRepository.GetByIdAsync(id);
+            var blog = await _blogRepository.FindAsync(id);
             if (blog == null)
                 return new BaseResponseModel<BlogDto> { Code = 404, Message = "Blog not found" };
             var dto = new BlogDto
@@ -93,7 +93,7 @@ public class BlogService : IBlogService
     {
         try
         {
-            var blog = await _blogRepository.GetByIdAsync(request.Id);
+            var blog = await _blogRepository.FindAsync(request.Id);
             if (blog == null)
                 return new BaseResponseModel<BlogDto> { Code = 404, Message = "Blog not found" };
             blog.ImageUrl = request.ImageUrl;
@@ -121,7 +121,7 @@ public class BlogService : IBlogService
     {
         try
         {
-            var blog = await _blogRepository.GetByIdAsync(id);
+            var blog = await _blogRepository.FindAsync(id);
             if (blog == null)
                 return new BaseResponseModel<bool> { Code = 404, Message = "Blog not found", Data = false };
             await _blogRepository.DeleteAsync(id);

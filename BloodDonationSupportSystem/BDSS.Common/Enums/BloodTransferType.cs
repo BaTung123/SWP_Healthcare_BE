@@ -4,7 +4,7 @@ namespace BDSS.Common.Enums
     {
         WholeBlood,
         RedBloodCell,
-        plasma,
-        platelets
+        Plasma,
+        Platelets
     }
 }

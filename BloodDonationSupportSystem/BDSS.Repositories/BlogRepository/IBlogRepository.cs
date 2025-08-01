@@ -5,5 +5,4 @@ namespace BDSS.Repositories.BlogRepository;
 
 public interface IBlogRepository : IGenericRepository<Blog>
 {
-    Task<Blog?> GetByIdAsync(long blogId);
 }

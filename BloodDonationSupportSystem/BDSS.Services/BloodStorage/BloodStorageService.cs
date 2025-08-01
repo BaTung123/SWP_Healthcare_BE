@@ -41,7 +41,7 @@ public class BloodStorageService : IBloodStorageService
     {
         try
         {
-            var bloodStorage = await _repository.GetByIdAsync(id);
+            var bloodStorage = await _repository.FindAsync(id);
             if (bloodStorage == null)
                 return new BaseResponseModel<BloodStorageDto> { Code = 404, Message = "BloodStorage not found" };
             var dto = new BloodStorageDto
@@ -93,7 +93,7 @@ public class BloodStorageService : IBloodStorageService
     {
         try
         {
-            var bloodStorage = await _repository.GetByIdAsync(request.Id);
+            var bloodStorage = await _repository.FindAsync(request.Id);
             if (bloodStorage == null)
                 return new BaseResponseModel<BloodStorageDto> { Code = 404, Message = "BloodStorage not found" };
             if (!IsValidStatusTransition(bloodStorage.Status, request.Status))
@@ -125,7 +125,7 @@ public class BloodStorageService : IBloodStorageService
     {
         try
         {
-            var bloodStorage = await _repository.GetByIdAsync(id);
+            var bloodStorage = await _repository.FindAsync(id);
             if (bloodStorage == null)
                 return new BaseResponseModel<bool> { Code = 404, Message = "BloodStorage not found", Data = false };
             await _repository.DeleteAsync(id);

@@ -33,7 +33,7 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
 
     public async Task<BaseResponseModel<BloodRequestApplicationDto>> GetBloodRequestApplicationByIdAsync(long id)
     {
-        var entity = await _repository.GetByIdAsync(id);
+        var entity = await _repository.FindAsync(id);
         if (entity == null)
         {
             return new BaseResponseModel<BloodRequestApplicationDto> { Code = 404, Message = "Not found" };
@@ -73,9 +73,9 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
     {
         try
         {
-            var bloodRequestApp = await _repository.GetByIdAsync(request.Id);
+            var bloodRequestApp = await _repository.FindAsync(request.Id);
             var bloodExport = await _bloodExportRepository.GetByBloodRequestApplicationIdAsync(request.Id);
-            var bloodStorage = await _bloodStorageRepository.GetByIdAsync(bloodExport.BloodStorageId);
+            var bloodStorage = await _bloodStorageRepository.FindAsync(bloodExport.BloodStorageId);
             if (bloodStorage == null)
             {
                 return new BaseResponseModel<BloodRequestApplicationDto> { Code = 404, Message = "Blood storage not found" };
