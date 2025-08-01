@@ -45,5 +45,19 @@ internal static class RelationshipConfig
             .WithMany()
             .HasForeignKey(bi => bi.BloodDonationApplicationId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        // One-to-many: User -> HealthCheck (optional)
+        modelBuilder.Entity<HealthCheck>()
+            .HasOne(hc => hc.User)
+            .WithMany()
+            .HasForeignKey(hc => hc.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // One-to-many: BloodDonationApplication -> HealthCheck (optional)
+        modelBuilder.Entity<HealthCheck>()
+            .HasOne(hc => hc.BloodDonationApplication)
+            .WithMany()
+            .HasForeignKey(hc => hc.BloodDonationApplicationId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

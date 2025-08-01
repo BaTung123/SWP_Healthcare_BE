@@ -31,6 +31,7 @@ public class BdssDbContext : DbContext
     public DbSet<UserEvents> UserEvents { get; set; }
     public DbSet<BloodDonationApplication> BloodDonationApplications { get; set; }
     public DbSet<BloodRequestApplication> BloodRequestApplications { get; set; }
+    public DbSet<HealthCheck> HealthChecks { get; set; }
     #endregion
 
     #region Private Methods
