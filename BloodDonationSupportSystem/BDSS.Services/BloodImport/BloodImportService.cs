@@ -2,8 +2,9 @@ using BDSS.DTOs;
 using BDSS.DTOs.BloodImport;
 using BDSS.Repositories.BloodDonationApplicationRepository;
 using BDSS.Repositories.BloodImportRepository;
-using BDSS.Repositories.BloodStorageRepository;
+using BDSS.Repositories.BloodBagRepository;
 using BDSS.Repositories.UserEventsRepository;
+using BDSS.Repositories.GenericRepository;
 
 namespace BDSS.Services.BloodImport;
 
@@ -12,14 +13,14 @@ public class BloodImportService : IBloodImportService
     private readonly IBloodImportRepository _bloodImportRepository;
     private readonly IBloodDonationApplicationRepository _bloodDonationApplicationRepository;
     private readonly IUserEventsRepository _userEventsRepository;
-    private readonly IBloodStorageRepository _bloodStorageRepository;
+    private readonly IBloodBagRepository _bloodBagRepository;
 
-    public BloodImportService(IBloodImportRepository bloodImportRepository, IBloodDonationApplicationRepository bloodDonationApplicationRepository, IUserEventsRepository userEventsRepository, IBloodStorageRepository bloodStorageRepository)
+    public BloodImportService(IBloodImportRepository bloodImportRepository, IBloodDonationApplicationRepository bloodDonationApplicationRepository, IUserEventsRepository userEventsRepository, IBloodBagRepository bloodBagRepository)
     {
         _bloodImportRepository = bloodImportRepository;
         _bloodDonationApplicationRepository = bloodDonationApplicationRepository;
         _userEventsRepository = userEventsRepository;
-        _bloodStorageRepository = bloodStorageRepository;
+        _bloodBagRepository = bloodBagRepository;
     }
 
     public async Task<BaseResponseModel<GetAllBloodImportsResponse>> GetAllBloodImportsAsync()
@@ -32,7 +33,7 @@ public class BloodImportService : IBloodImportService
                 BloodImports = bloodImports.Select(b => new BloodImportDto
                 {
                     Id = b.Id,
-                    BloodStorageId = b.BloodStorageId,
+                    BloodBagId = b.BloodBagId,
                     BloodDonationApplicationId = b.BloodDonationApplicationId,
                     Note = b.Note,
                     Status = b.Status,
@@ -58,7 +59,7 @@ public class BloodImportService : IBloodImportService
             var dto = new BloodImportDto
             {
                 Id = bloodImport.Id,
-                BloodStorageId = bloodImport.BloodStorageId,
+                BloodBagId = bloodImport.BloodBagId,
                 BloodDonationApplicationId = bloodImport.BloodDonationApplicationId,
                 Note = bloodImport.Note,
                 Status = bloodImport.Status,
@@ -78,10 +79,14 @@ public class BloodImportService : IBloodImportService
         try
         {
             var bloodDonationApplication = await _bloodDonationApplicationRepository.FindAsync(request.BloodDonationApplicationId);
-            var bloodStorage = await _bloodStorageRepository.GetByBloodTypeAsync(bloodDonationApplication.BloodType);
+            var bloodBag = await _bloodBagRepository.GetBloodBagsByBloodTypeAsync(bloodDonationApplication.BloodType);
+            var availableBloodBag = bloodBag.FirstOrDefault(bb => bb.Status == BDSS.Common.Enums.BloodBagStatus.Available);
+            if (availableBloodBag == null)
+                return new BaseResponseModel<BloodImportDto> { Code = 400, Message = "No available blood bag found for this blood type" };
+
             var bloodImport = new Models.Entities.BloodImport
             {
-                BloodStorageId = bloodStorage.Id,
+                BloodBagId = availableBloodBag.Id,
                 BloodDonationApplicationId = request.BloodDonationApplicationId,
                 Note = request.Note
             };
@@ -89,7 +94,7 @@ public class BloodImportService : IBloodImportService
             var dto = new BloodImportDto
             {
                 Id = created.Id,
-                BloodStorageId = created.BloodStorageId,
+                BloodBagId = created.BloodBagId,
                 BloodDonationApplicationId = created.BloodDonationApplicationId,
                 Note = created.Note,
                 Status = created.Status,
@@ -118,9 +123,9 @@ public class BloodImportService : IBloodImportService
             var bloodImport = await _bloodImportRepository.FindAsync(request.Id);
             if (bloodImport == null)
                 return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood import request not found" };
-            var bloodStorage = await _bloodStorageRepository.FindAsync(bloodImport.BloodStorageId);
-            if (bloodStorage == null)
-                return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood storage not found" };
+            var bloodBag = await _bloodBagRepository.FindAsync(bloodImport.BloodBagId);
+            if (bloodBag == null)
+                return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood bag not found" };
             var bloodDonationApp = await _bloodDonationApplicationRepository.FindAsync(bloodImport.BloodDonationApplicationId.Value);
             if (bloodDonationApp == null)
                 return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood donation application not found" };
@@ -130,7 +135,7 @@ public class BloodImportService : IBloodImportService
             }
             bloodImport.Status = request.Status;
             bloodImport.Note = request.Note;
-            bloodStorage.Quantity += bloodDonationApp.Quantity;
+            bloodBag.Quantity += bloodDonationApp.Quantity;
             await _bloodImportRepository.UpdateAsync(bloodImport);
 
             if (bloodImport.Status == Common.Enums.BloodImportStatus.Imported && bloodImport.BloodDonationApplicationId != null)
@@ -156,7 +161,7 @@ public class BloodImportService : IBloodImportService
             var dto = new BloodImportDto
             {
                 Id = bloodImport.Id,
-                BloodStorageId = bloodImport.BloodStorageId,
+                BloodBagId = bloodImport.BloodBagId,
                 BloodDonationApplicationId = bloodImport.BloodDonationApplicationId,
                 Note = bloodImport.Note,
                 Status = bloodImport.Status,

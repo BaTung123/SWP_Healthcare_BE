@@ -25,18 +25,18 @@ internal static class RelationshipConfig
 
         // Remove invalid BloodImport -> Event relationship (no EventId property)
 
-        // One-to-many: BloodStorage -> BloodImport
+        // One-to-many: BloodBag -> BloodImport
         modelBuilder.Entity<BloodImport>()
-            .HasOne(bi => bi.BloodStorage)
-            .WithMany(bs => bs.BloodImports)
-            .HasForeignKey(bi => bi.BloodStorageId)
+            .HasOne(bi => bi.BloodBag)
+            .WithMany(bb => bb.BloodImports)
+            .HasForeignKey(bi => bi.BloodBagId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        // One-to-many: BloodStorage -> BloodExport
+        // One-to-many: BloodBag -> BloodExport
         modelBuilder.Entity<BloodExport>()
-            .HasOne(be => be.BloodStorage)
-            .WithMany(bs => bs.BloodExports)
-            .HasForeignKey(be => be.BloodStorageId)
+            .HasOne(be => be.BloodBag)
+            .WithMany(bb => bb.BloodExports)
+            .HasForeignKey(be => be.BloodBagId)
             .OnDelete(DeleteBehavior.SetNull);
 
         // One-to-many: BloodDonationApplication -> BloodImport (optional)

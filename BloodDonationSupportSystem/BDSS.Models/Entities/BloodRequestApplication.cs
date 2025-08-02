@@ -5,7 +5,7 @@ namespace BDSS.Models.Entities
 {
     public class BloodRequestApplication : GenericModel
     {
-        public long? BloodStorageId { get; set; } = null;
+        public long? BloodBagId { get; set; } = null;
         public string FullName { get; set; } = string.Empty;
         public DateTime? Dob { get; set; }
         public string Gender { get; set; } = string.Empty;
@@ -18,6 +18,6 @@ namespace BDSS.Models.Entities
         public bool IsUrged { get; set; } = false;
         public string PhoneNumber { get; set; } = string.Empty;
         public DateTime BloodRequestDate { get; set; } = DateTimeUtils.GetCurrentGmtPlus7();
-        public virtual BloodStorage BloodStorage { get; set; } = null!;
+        public virtual BloodBag? BloodBag { get; set; }
     }
 }

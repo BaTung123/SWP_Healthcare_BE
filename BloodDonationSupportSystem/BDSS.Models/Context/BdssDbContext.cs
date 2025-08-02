@@ -26,7 +26,7 @@ public class BdssDbContext : DbContext
     public DbSet<Event> Events { get; set; }
     public DbSet<BloodImport> BloodImports { get; set; }
     public DbSet<BloodExport> BloodExports { get; set; }
-    public DbSet<BloodStorage> BloodStorages { get; set; }
+    public DbSet<BloodBag> BloodBags { get; set; }
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<UserEvents> UserEvents { get; set; }
     public DbSet<BloodDonationApplication> BloodDonationApplications { get; set; }

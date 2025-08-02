@@ -6,7 +6,8 @@ using BDSS.Common.Utils;
 public class BloodDonationApplicationDto
 {
     public long Id { get; set; }
-    public long? BloodStorageId { get; set; }
+    public long? UserId { get; set; }
+    public long? BloodBagId { get; set; }
     public long? EventId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public DateTime? Dob { get; set; }

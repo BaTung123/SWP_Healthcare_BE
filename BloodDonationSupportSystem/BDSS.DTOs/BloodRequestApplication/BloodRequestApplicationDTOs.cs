@@ -5,7 +5,7 @@ using BDSS.Common.Enums;
 public class BloodRequestApplicationDto
 {
     public long Id { get; set; }
-    public long? BloodStorageId { get; set; }
+    public long? BloodBagId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public DateTime? Dob { get; set; }
     public string Gender { get; set; } = string.Empty;

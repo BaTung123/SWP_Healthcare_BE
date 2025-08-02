@@ -5,7 +5,7 @@ using BDSS.Common.Enums;
 public class BloodExportDto
 {
     public long Id { get; set; }
-    public long BloodStorageId { get; set; }
+    public long BloodBagId { get; set; }
     public long? BloodRequestApplicationId { get; set; }
     public string Note { get; set; } = string.Empty;
     public BloodExportStatus Status { get; set; }
@@ -22,7 +22,7 @@ public class CreateBloodExportRequest
 public class UpdateBloodExportRequest
 {
     public long Id { get; set; }
-    public long BloodStorageId { get; set; }
+    public long BloodBagId { get; set; }
     public long? BloodRequestApplicationId { get; set; }
     public string Note { get; set; } = string.Empty;
     public BloodExportStatus Status { get; set; }

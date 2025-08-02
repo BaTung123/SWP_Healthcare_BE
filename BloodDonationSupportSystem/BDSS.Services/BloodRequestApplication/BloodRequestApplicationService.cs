@@ -4,7 +4,7 @@ using BDSS.DTOs;
 using BDSS.DTOs.BloodRequestApplication;
 using BDSS.Repositories.BloodExportRepository;
 using BDSS.Repositories.BloodRequestApplicationRepository;
-using BDSS.Repositories.BloodStorageRepository;
+using BDSS.Repositories.BloodBagRepository;
 
 namespace BDSS.Services.BloodRequestApplication;
 
@@ -12,11 +12,11 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
 {
     private readonly IBloodRequestApplicationRepository _repository;
     private readonly IBloodExportRepository _bloodExportRepository;
-    private readonly IBloodStorageRepository _bloodStorageRepository;
-    public BloodRequestApplicationService(IBloodRequestApplicationRepository repository, IBloodStorageRepository bloodStorageRepository, IBloodExportRepository bloodExportRepository)
+    private readonly IBloodBagRepository _bloodBagRepository;
+    public BloodRequestApplicationService(IBloodRequestApplicationRepository repository, IBloodBagRepository bloodBagRepository, IBloodExportRepository bloodExportRepository)
     {
         _repository = repository;
-        _bloodStorageRepository = bloodStorageRepository;
+        _bloodBagRepository = bloodBagRepository;
         _bloodExportRepository = bloodExportRepository;
     }
 
@@ -48,10 +48,15 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
         {
             return new BaseResponseModel<BloodRequestApplicationDto> { Code = 400, Message = "FullName and Quantity are required." };
         }
-        var bloodStorage = await _bloodStorageRepository.GetByBloodTypeAsync(request.BloodType);
+        var bloodBags = await _bloodBagRepository.GetBloodBagsByBloodTypeAsync(request.BloodType);
+        var availableBloodBag = bloodBags.FirstOrDefault(bb => bb.Status == BloodBagStatus.Available);
+        if (availableBloodBag == null)
+        {
+            return new BaseResponseModel<BloodRequestApplicationDto> { Code = 404, Message = "No available blood bag found for this blood type" };
+        }
         var entity = new BDSS.Models.Entities.BloodRequestApplication
         {
-            BloodStorageId = bloodStorage.Id,
+            BloodBagId = availableBloodBag.Id,
             FullName = request.FullName,
             Dob = request.Dob,
             Gender = request.Gender,
@@ -75,10 +80,10 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
         {
             var bloodRequestApp = await _repository.FindAsync(request.Id);
             var bloodExport = await _bloodExportRepository.GetByBloodRequestApplicationIdAsync(request.Id);
-            var bloodStorage = await _bloodStorageRepository.FindAsync(bloodExport.BloodStorageId);
-            if (bloodStorage == null)
+            var bloodBag = await _bloodBagRepository.FindAsync(bloodExport.BloodBagId);
+            if (bloodBag == null)
             {
-                return new BaseResponseModel<BloodRequestApplicationDto> { Code = 404, Message = "Blood storage not found" };
+                return new BaseResponseModel<BloodRequestApplicationDto> { Code = 404, Message = "Blood bag not found" };
             }
             if (bloodExport == null)
             {
@@ -99,8 +104,8 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
                 bloodExport.Status = BloodExportStatus.Exported;
                 await _bloodExportRepository.UpdateAsync(bloodExport);
 
-                bloodStorage.Quantity -= bloodRequestApp.Quantity;
-                await _bloodStorageRepository.UpdateAsync(bloodStorage);
+                bloodBag.Quantity -= bloodRequestApp.Quantity;
+                await _bloodBagRepository.UpdateAsync(bloodBag);
             }
             await _repository.UpdateAsync(bloodRequestApp);
             return new BaseResponseModel<BloodRequestApplicationDto> { Code = 200, Data = ToDto(bloodRequestApp) };
@@ -116,7 +121,7 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
         return new BloodRequestApplicationDto
         {
             Id = entity.Id,
-            BloodStorageId = entity.BloodStorageId,
+            BloodBagId = entity.BloodBagId,
             FullName = entity.FullName,
             Dob = entity.Dob,
             Gender = entity.Gender,

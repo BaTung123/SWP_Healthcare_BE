@@ -7,7 +7,7 @@ using BDSS.Services.BloodDonationApplication;
 using BDSS.Services.BloodExport;
 using BDSS.Services.BloodImport;
 using BDSS.Services.BloodRequestApplication;
-using BDSS.Services.BloodStorage;
+using BDSS.Services.BloodBag;
 using BDSS.Services.Event;
 using BDSS.Services.HealthCheck;
 using BDSS.Services.UserEvents;
@@ -35,7 +35,7 @@ internal static class ServiceConfig
         services.AddScoped<IBloodExportService, BloodExportService>();
         services.AddScoped<IBloodImportService, BloodImportService>();
         services.AddScoped<IEventService, EventService>();
-        services.AddScoped<IBloodStorageService, BloodStorageService>();
+        services.AddScoped<IBloodBagService, BloodBagService>();
         services.AddScoped<IBloodDonationApplicationService, BloodDonationApplicationService>();
         services.AddScoped<IBloodRequestApplicationService, BloodRequestApplicationService>();
         services.AddScoped<IUserEventsService, UserEventsService>();

@@ -9,6 +9,7 @@ namespace BDSS.Common.Enums
         B_Negative,
         B_Positive,
         AB_Negative,
-        AB_Positive
+        AB_Positive,
+        Unknown
     }
 }

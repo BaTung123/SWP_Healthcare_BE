@@ -15,7 +15,7 @@ internal static class EnumConfig
             .Property(o => o.Status)
             .HasConversion<int>();
 
-        modelBuilder.Entity<BloodStorage>()
+        modelBuilder.Entity<BloodBag>()
             .Property(o => o.Status)
             .HasConversion<int>();
 

@@ -6,7 +6,7 @@ namespace BDSS.Models.Entities
     public class BloodDonationApplication : GenericModel
     {
         public long? UserId { get; set; } = null;
-        public long? BloodStorageId { get; set; } = null;
+        public long? BloodBagId { get; set; } = null;
         public long? EventId { get; set; } = null;
         public string FullName { get; set; } = string.Empty;
         public DateTime? Dob { get; set; }
@@ -19,7 +19,7 @@ namespace BDSS.Models.Entities
         public BloodTransferType BloodTransferType { get; set; } = BloodTransferType.WholeBlood;
         public int Quantity { get; set; } = 0;
         public string Note { get; set; } = string.Empty;
-        public virtual BloodStorage BloodStorage { get; set; } = null!;
+        public virtual BloodBag? BloodBag { get; set; }
         public virtual Event? Event { get; set; }
         public virtual User? User { get; set; }
     }

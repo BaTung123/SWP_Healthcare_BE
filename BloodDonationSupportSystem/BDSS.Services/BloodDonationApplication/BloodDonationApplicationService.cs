@@ -4,7 +4,7 @@ using BDSS.DTOs;
 using BDSS.DTOs.BloodDonationApplication;
 using BDSS.Models.Entities;
 using BDSS.Repositories.BloodDonationApplicationRepository;
-using BDSS.Repositories.BloodStorageRepository;
+using BDSS.Repositories.BloodBagRepository;
 using BDSS.Repositories.UserEventsRepository;
 
 namespace BDSS.Services.BloodDonationApplication;
@@ -12,13 +12,13 @@ namespace BDSS.Services.BloodDonationApplication;
 public class BloodDonationApplicationService : IBloodDonationApplicationService
 {
     private readonly IBloodDonationApplicationRepository _repository;
-    private readonly IBloodStorageRepository _bloodStorageRepository;
+    private readonly IBloodBagRepository _bloodBagRepository;
     private readonly IUserEventsRepository _userEventsRepository;
-    public BloodDonationApplicationService(IBloodDonationApplicationRepository repository, IUserEventsRepository userEventsRepository, IBloodStorageRepository bloodStorageRepository)
+    public BloodDonationApplicationService(IBloodDonationApplicationRepository repository, IUserEventsRepository userEventsRepository, IBloodBagRepository bloodBagRepository)
     {
         _repository = repository;
         _userEventsRepository = userEventsRepository;
-        _bloodStorageRepository = bloodStorageRepository;
+        _bloodBagRepository = bloodBagRepository;
 
     }
 
@@ -52,10 +52,11 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
 
     public async Task<BaseResponseModel<BloodDonationApplicationDto>> CreateBloodDonationApplicationAsync(CreateBloodDonationApplicationRequest request)
     {
-        var bloodStorage = await _bloodStorageRepository.GetByBloodTypeAsync(request.BloodType);
-        if (bloodStorage == null)
+        var bloodBags = await _bloodBagRepository.GetBloodBagsByBloodTypeAsync(request.BloodType);
+        var availableBloodBag = bloodBags.FirstOrDefault(bb => bb.Status == BloodBagStatus.Available);
+        if (availableBloodBag == null)
         {
-            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "Blood storage not found" };
+            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "No available blood bag found for this blood type" };
         }
 
         // Check if user has a previous donation within the last 3 months
@@ -89,7 +90,7 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
 
         var entity = new BDSS.Models.Entities.BloodDonationApplication
         {
-            BloodStorageId = bloodStorage.Id,
+            BloodBagId = availableBloodBag.Id,
             UserId = request.UserId,
             EventId = request.EventId,
             FullName = request.FullName,
@@ -129,17 +130,18 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
 
     public async Task<BaseResponseModel<BloodDonationApplicationDto>> UpdateBloodDonationApplicationAsync(UpdateBloodDonationApplicationRequest request)
     {
-        var bloodStorage = await _bloodStorageRepository.GetByBloodTypeAsync(request.BloodType);
-        if (bloodStorage == null)
+        var bloodBags = await _bloodBagRepository.GetBloodBagsByBloodTypeAsync(request.BloodType);
+        var availableBloodBag = bloodBags.FirstOrDefault(bb => bb.Status == BloodBagStatus.Available);
+        if (availableBloodBag == null)
         {
-            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "Blood storage not found" };
+            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "No available blood bag found for this blood type" };
         }
         var entity = await _repository.FindAsync(request.Id);
         if (entity == null)
         {
             return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "Not found" };
         }
-        entity.BloodStorageId = bloodStorage.Id;
+        entity.BloodBagId = availableBloodBag.Id;
         entity.BloodType = request.BloodType;
         entity.BloodTransferType = request.BloodTransferType;
         entity.Quantity = request.Quantity.Value;
@@ -152,7 +154,8 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
         return new BloodDonationApplicationDto
         {
             Id = entity.Id,
-            BloodStorageId = entity.BloodStorageId,
+            UserId = entity.UserId,
+            BloodBagId = entity.BloodBagId,
             EventId = entity.EventId,
             FullName = entity.FullName,
             Dob = entity.Dob,

@@ -25,7 +25,7 @@ public class BloodExportService : IBloodExportService
                 BloodExports = bloodExports.Select(b => new BloodExportDto
                 {
                     Id = b.Id,
-                    BloodStorageId = b.BloodStorageId,
+                    BloodBagId = b.BloodBagId,
                     BloodRequestApplicationId = b.BloodRequestApplicationId,
                     Note = b.Note,
                     Status = b.Status,
@@ -51,7 +51,7 @@ public class BloodExportService : IBloodExportService
             var dto = new BloodExportDto
             {
                 Id = bloodExport.Id,
-                BloodStorageId = bloodExport.BloodStorageId,
+                BloodBagId = bloodExport.BloodBagId,
                 BloodRequestApplicationId = bloodExport.BloodRequestApplicationId,
                 Note = bloodExport.Note,
                 Status = bloodExport.Status,
@@ -75,7 +75,7 @@ public class BloodExportService : IBloodExportService
                 return new BaseResponseModel<BloodExportDto> { Code = 404, Message = "BloodRequestApplication not found" };
             var bloodExport = new Models.Entities.BloodExport
             {
-                BloodStorageId = existingRequestApp.BloodStorageId.Value,
+                BloodBagId = existingRequestApp.BloodBagId.Value,
                 BloodRequestApplicationId = request.BloodRequestApplicationId,
                 Note = request.Note
             };
@@ -83,7 +83,7 @@ public class BloodExportService : IBloodExportService
             var dto = new BloodExportDto
             {
                 Id = created.Id,
-                BloodStorageId = created.BloodStorageId,
+                BloodBagId = created.BloodBagId,
                 BloodRequestApplicationId = created.BloodRequestApplicationId,
                 Note = created.Note,
                 Status = created.Status,
@@ -135,7 +135,7 @@ public class BloodExportService : IBloodExportService
             var dto = new BloodExportDto
             {
                 Id = bloodExport.Id,
-                BloodStorageId = bloodExport.BloodStorageId,
+                BloodBagId = bloodExport.BloodBagId,
                 BloodRequestApplicationId = bloodExport.BloodRequestApplicationId,
                 Note = bloodExport.Note,
                 Status = bloodExport.Status,
