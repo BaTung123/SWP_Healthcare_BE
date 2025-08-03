@@ -572,7 +572,8 @@ namespace BDSS.Models.Migrations
                 {
                     b.HasOne("BDSS.Models.Entities.BloodBag", "BloodBag")
                         .WithMany()
-                        .HasForeignKey("BloodBagId");
+                        .HasForeignKey("BloodBagId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("BDSS.Models.Entities.Event", "Event")
                         .WithMany()
@@ -594,7 +595,7 @@ namespace BDSS.Models.Migrations
                     b.HasOne("BDSS.Models.Entities.BloodBag", "BloodBag")
                         .WithMany("BloodExports")
                         .HasForeignKey("BloodBagId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BDSS.Models.Entities.BloodRequestApplication", "BloodRequestApplication")
@@ -611,7 +612,7 @@ namespace BDSS.Models.Migrations
                     b.HasOne("BDSS.Models.Entities.BloodBag", "BloodBag")
                         .WithMany("BloodImports")
                         .HasForeignKey("BloodBagId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BDSS.Models.Entities.BloodDonationApplication", "BloodDonationApplication")

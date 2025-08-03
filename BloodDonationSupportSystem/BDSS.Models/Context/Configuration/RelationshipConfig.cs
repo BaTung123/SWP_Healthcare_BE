@@ -30,20 +30,27 @@ internal static class RelationshipConfig
             .HasOne(bi => bi.BloodBag)
             .WithMany(bb => bb.BloodImports)
             .HasForeignKey(bi => bi.BloodBagId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         // One-to-many: BloodBag -> BloodExport
         modelBuilder.Entity<BloodExport>()
             .HasOne(be => be.BloodBag)
             .WithMany(bb => bb.BloodExports)
             .HasForeignKey(be => be.BloodBagId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         // One-to-many: BloodDonationApplication -> BloodImport (optional)
         modelBuilder.Entity<BloodImport>()
             .HasOne(bi => bi.BloodDonationApplication)
             .WithMany()
             .HasForeignKey(bi => bi.BloodDonationApplicationId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // One-to-many: BloodBag -> BloodDonationApplication (optional)
+        modelBuilder.Entity<BloodDonationApplication>()
+            .HasOne(bda => bda.BloodBag)
+            .WithMany()
+            .HasForeignKey(bda => bda.BloodBagId)
             .OnDelete(DeleteBehavior.SetNull);
 
         // One-to-many: User -> HealthCheck (optional)
