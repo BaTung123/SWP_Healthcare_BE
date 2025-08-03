@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BDSS.Models.Migrations
 {
     [DbContext(typeof(BdssDbContext))]
-    [Migration("20250708121238_UpdateBloodImportAndBloodExport")]
-    partial class UpdateBloodImportAndBloodExport
+    [Migration("20250803153941_InitialEmpty")]
+    partial class InitialEmpty
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,7 @@ namespace BDSS.Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -59,7 +59,7 @@ namespace BDSS.Models.Migrations
                     b.ToTable("Blogs");
                 });
 
-            modelBuilder.Entity("BDSS.Models.Entities.BloodExport", b =>
+            modelBuilder.Entity("BDSS.Models.Entities.BloodBag", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,25 +67,26 @@ namespace BDSS.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("BloodStorageId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("BloodType")
+                    b.Property<string>("BagNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BloodType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CollectionDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("HospitalName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Note")
-                        .IsRequired()
+                    b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
@@ -99,12 +100,10 @@ namespace BDSS.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BloodStorageId");
-
-                    b.ToTable("BloodExports");
+                    b.ToTable("BloodBags");
                 });
 
-            modelBuilder.Entity("BDSS.Models.Entities.BloodImport", b =>
+            modelBuilder.Entity("BDSS.Models.Entities.BloodDonationApplication", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -112,20 +111,28 @@ namespace BDSS.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("BloodStorageId")
+                    b.Property<long?>("BloodBagId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("BloodType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("BloodTransferType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BloodType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Dob")
+                    b.Property<DateTime?>("Dob")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("EventId")
+                    b.Property<DateOnly>("DonationEndDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("DonationStartDate")
+                        .HasColumnType("date");
+
+                    b.Property<long?>("EventId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("FullName")
@@ -143,39 +150,7 @@ namespace BDSS.Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BloodStorageId");
-
-                    b.HasIndex("EventId");
-
-                    b.ToTable("BloodImports");
-                });
-
-            modelBuilder.Entity("BDSS.Models.Entities.BloodStorage", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -188,9 +163,164 @@ namespace BDSS.Models.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
-                    b.ToTable("BloodStorages");
+                    b.HasIndex("BloodBagId");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BloodDonationApplications");
+                });
+
+            modelBuilder.Entity("BDSS.Models.Entities.BloodExport", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("BloodBagId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("BloodRequestApplicationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BloodBagId");
+
+                    b.HasIndex("BloodRequestApplicationId");
+
+                    b.ToTable("BloodExports");
+                });
+
+            modelBuilder.Entity("BDSS.Models.Entities.BloodImport", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("BloodBagId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("BloodDonationApplicationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BloodBagId");
+
+                    b.HasIndex("BloodDonationApplicationId");
+
+                    b.ToTable("BloodImports");
+                });
+
+            modelBuilder.Entity("BDSS.Models.Entities.BloodRequestApplication", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("BloodBagId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("BloodRequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("BloodTransferType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BloodType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Dob")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUrged")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BloodBagId");
+
+                    b.ToTable("BloodRequestApplications");
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.Event", b =>
@@ -202,6 +332,12 @@ namespace BDSS.Models.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EventEndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EventStartTime")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
@@ -237,6 +373,72 @@ namespace BDSS.Models.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("BDSS.Models.Entities.HealthCheck", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("BloodDonationApplicationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("BloodPressure")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BloodType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HealthCheckResult")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HeartRate")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Height")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Hemoglobin")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Temperature")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BloodDonationApplicationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("HealthChecks");
+                });
+
             modelBuilder.Entity("BDSS.Models.Entities.User", b =>
                 {
                     b.Property<long>("Id")
@@ -246,17 +448,15 @@ namespace BDSS.Models.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AvatarUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BloodType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("BloodType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Dob")
+                    b.Property<DateTime?>("Dob")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -264,7 +464,6 @@ namespace BDSS.Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsBanned")
@@ -285,7 +484,6 @@ namespace BDSS.Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Role")
@@ -306,6 +504,24 @@ namespace BDSS.Models.Migrations
 
                     b.Property<long>("EventId")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserEventsStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "EventId");
 
@@ -355,30 +571,84 @@ namespace BDSS.Models.Migrations
                     b.ToTable("UserOtps");
                 });
 
+            modelBuilder.Entity("BDSS.Models.Entities.BloodDonationApplication", b =>
+                {
+                    b.HasOne("BDSS.Models.Entities.BloodBag", "BloodBag")
+                        .WithMany()
+                        .HasForeignKey("BloodBagId");
+
+                    b.HasOne("BDSS.Models.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId");
+
+                    b.HasOne("BDSS.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("BloodBag");
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BDSS.Models.Entities.BloodExport", b =>
                 {
-                    b.HasOne("BDSS.Models.Entities.BloodStorage", "BloodStorage")
+                    b.HasOne("BDSS.Models.Entities.BloodBag", "BloodBag")
                         .WithMany("BloodExports")
-                        .HasForeignKey("BloodStorageId")
+                        .HasForeignKey("BloodBagId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("BloodStorage");
+                    b.HasOne("BDSS.Models.Entities.BloodRequestApplication", "BloodRequestApplication")
+                        .WithMany()
+                        .HasForeignKey("BloodRequestApplicationId");
+
+                    b.Navigation("BloodBag");
+
+                    b.Navigation("BloodRequestApplication");
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.BloodImport", b =>
                 {
-                    b.HasOne("BDSS.Models.Entities.BloodStorage", "BloodStorage")
+                    b.HasOne("BDSS.Models.Entities.BloodBag", "BloodBag")
                         .WithMany("BloodImports")
-                        .HasForeignKey("BloodStorageId")
+                        .HasForeignKey("BloodBagId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("BDSS.Models.Entities.Event", null)
+                    b.HasOne("BDSS.Models.Entities.BloodDonationApplication", "BloodDonationApplication")
                         .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BloodDonationApplicationId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("BloodStorage");
+                    b.Navigation("BloodBag");
+
+                    b.Navigation("BloodDonationApplication");
+                });
+
+            modelBuilder.Entity("BDSS.Models.Entities.BloodRequestApplication", b =>
+                {
+                    b.HasOne("BDSS.Models.Entities.BloodBag", "BloodBag")
+                        .WithMany()
+                        .HasForeignKey("BloodBagId");
+
+                    b.Navigation("BloodBag");
+                });
+
+            modelBuilder.Entity("BDSS.Models.Entities.HealthCheck", b =>
+                {
+                    b.HasOne("BDSS.Models.Entities.BloodDonationApplication", "BloodDonationApplication")
+                        .WithMany()
+                        .HasForeignKey("BloodDonationApplicationId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("BDSS.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("BloodDonationApplication");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.UserEvents", b =>
@@ -411,7 +681,7 @@ namespace BDSS.Models.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BDSS.Models.Entities.BloodStorage", b =>
+            modelBuilder.Entity("BDSS.Models.Entities.BloodBag", b =>
                 {
                     b.Navigation("BloodExports");
 

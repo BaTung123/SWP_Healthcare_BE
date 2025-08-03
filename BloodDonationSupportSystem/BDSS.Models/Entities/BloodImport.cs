@@ -4,7 +4,7 @@ namespace BDSS.Models.Entities
 {
     public class BloodImport : GenericModel
     {
-        public long BloodBagId { get; set; }
+        public long? BloodBagId { get; set; }
         public long? BloodDonationApplicationId { get; set; }
         public string Note { get; set; } = string.Empty;
         public BloodImportStatus Status { get; set; } = BloodImportStatus.Pending;

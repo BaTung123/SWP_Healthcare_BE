@@ -5,7 +5,7 @@ using BDSS.Common.Enums;
 public class BloodImportDto
 {
     public long Id { get; set; }
-    public long BloodBagId { get; set; }
+    public long? BloodBagId { get; set; }
     public long? BloodDonationApplicationId { get; set; }
     public string Note { get; set; } = string.Empty;
     public BloodImportStatus Status { get; set; }

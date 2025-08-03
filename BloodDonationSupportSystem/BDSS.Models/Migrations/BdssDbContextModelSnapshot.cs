@@ -53,7 +53,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Blogs");
+                    b.ToTable("Blogs", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.BloodBag", b =>
@@ -97,7 +97,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BloodBags");
+                    b.ToTable("BloodBags", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.BloodDonationApplication", b =>
@@ -171,7 +171,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BloodDonationApplications");
+                    b.ToTable("BloodDonationApplications", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.BloodExport", b =>
@@ -210,7 +210,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasIndex("BloodRequestApplicationId");
 
-                    b.ToTable("BloodExports");
+                    b.ToTable("BloodExports", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.BloodImport", b =>
@@ -221,7 +221,7 @@ namespace BDSS.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("BloodBagId")
+                    b.Property<long?>("BloodBagId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("BloodDonationApplicationId")
@@ -249,7 +249,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasIndex("BloodDonationApplicationId");
 
-                    b.ToTable("BloodImports");
+                    b.ToTable("BloodImports", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.BloodRequestApplication", b =>
@@ -317,7 +317,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasIndex("BloodBagId");
 
-                    b.ToTable("BloodRequestApplications");
+                    b.ToTable("BloodRequestApplications", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.Event", b =>
@@ -367,7 +367,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.HealthCheck", b =>
@@ -433,7 +433,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("HealthChecks");
+                    b.ToTable("HealthChecks", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.User", b =>
@@ -491,7 +491,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.UserEvents", b =>
@@ -524,7 +524,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("UserEvents");
+                    b.ToTable("UserEvents", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.UserOtp", b =>
@@ -565,7 +565,7 @@ namespace BDSS.Models.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserOtps");
+                    b.ToTable("UserOtps", (string)null);
                 });
 
             modelBuilder.Entity("BDSS.Models.Entities.BloodDonationApplication", b =>
@@ -611,8 +611,7 @@ namespace BDSS.Models.Migrations
                     b.HasOne("BDSS.Models.Entities.BloodBag", "BloodBag")
                         .WithMany("BloodImports")
                         .HasForeignKey("BloodBagId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("BDSS.Models.Entities.BloodDonationApplication", "BloodDonationApplication")
                         .WithMany()
