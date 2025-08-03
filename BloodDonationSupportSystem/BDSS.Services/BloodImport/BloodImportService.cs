@@ -79,14 +79,30 @@ public class BloodImportService : IBloodImportService
         try
         {
             var bloodDonationApplication = await _bloodDonationApplicationRepository.FindAsync(request.BloodDonationApplicationId);
-            var bloodBag = await _bloodBagRepository.GetBloodBagsByBloodTypeAsync(bloodDonationApplication.BloodType);
-            var availableBloodBag = bloodBag.FirstOrDefault(bb => bb.Status == BDSS.Common.Enums.BloodBagStatus.Available);
-            if (availableBloodBag == null)
-                return new BaseResponseModel<BloodImportDto> { Code = 400, Message = "No available blood bag found for this blood type" };
+            if (bloodDonationApplication == null)
+                return new BaseResponseModel<BloodImportDto> { Code = 404, Message = "Blood donation application not found" };
+
+            // Create a new blood bag for this import
+            var newBloodBag = new Models.Entities.BloodBag
+            {
+                BagNumber = GenerateBagNumber(),
+                BloodType = bloodDonationApplication.BloodType,
+                Quantity = bloodDonationApplication.Quantity,
+                CollectionDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddDays(42),
+                Status = BDSS.Common.Enums.BloodBagStatus.Available,
+                Notes = $"Created from blood donation application {bloodDonationApplication.Id}"
+            };
+
+            var createdBloodBag = await _bloodBagRepository.AddAsync(newBloodBag);
+
+            // Update the blood donation application with the blood bag ID
+            bloodDonationApplication.BloodBagId = createdBloodBag.Id;
+            await _bloodDonationApplicationRepository.UpdateAsync(bloodDonationApplication);
 
             var bloodImport = new Models.Entities.BloodImport
             {
-                BloodBagId = availableBloodBag.Id,
+                BloodBagId = createdBloodBag.Id,
                 BloodDonationApplicationId = request.BloodDonationApplicationId,
                 Note = request.Note
             };
@@ -109,11 +125,20 @@ public class BloodImportService : IBloodImportService
         }
     }
 
+    private string GenerateBagNumber()
+    {
+        // Generate a unique bag number with format: BB-YYYYMMDD-XXXX
+        var date = DateTime.UtcNow.ToString("yyyyMMdd");
+        var random = new Random();
+        var randomPart = random.Next(1000, 9999).ToString();
+        return $"BB-{date}-{randomPart}";
+    }
+
     private static bool IsValidStatusTransition(BDSS.Common.Enums.BloodImportStatus current, BDSS.Common.Enums.BloodImportStatus next)
     {
         return (current == BDSS.Common.Enums.BloodImportStatus.Pending && (next == BDSS.Common.Enums.BloodImportStatus.Accepted || next == BDSS.Common.Enums.BloodImportStatus.Denied))
             || (current == BDSS.Common.Enums.BloodImportStatus.Accepted && next == BDSS.Common.Enums.BloodImportStatus.Imported)
-            || (current == next && (current == BDSS.Common.Enums.BloodImportStatus.Imported || current == BDSS.Common.Enums.BloodImportStatus.Denied));
+            || (current == BDSS.Common.Enums.BloodImportStatus.Imported && next == BDSS.Common.Enums.BloodImportStatus.Denied);
     }
 
     public async Task<BaseResponseModel<BloodImportDto>> UpdateBloodImportStatusAsync(UpdateBloodImportStatusRequest request)

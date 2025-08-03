@@ -11,6 +11,7 @@ using BDSS.Services.BloodBag;
 using BDSS.Services.Event;
 using BDSS.Services.HealthCheck;
 using BDSS.Services.UserEvents;
+using BDSS.Services.BackgroundServices;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -18,12 +19,12 @@ namespace BDSS.APIs.Configuration;
 
 internal static class ServiceConfig
 {
-    public static void Configure(IServiceCollection services)
+    public static void Configure(IServiceCollection services, IConfiguration configuration)
     {
-        RegisterServices(services);
+        RegisterServices(services, configuration);
     }
 
-    private static void RegisterServices(IServiceCollection services)
+    private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
         // Authentication services
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -40,6 +41,10 @@ internal static class ServiceConfig
         services.AddScoped<IBloodRequestApplicationService, BloodRequestApplicationService>();
         services.AddScoped<IUserEventsService, UserEventsService>();
         services.AddScoped<IHealthCheckService, HealthCheckService>();
+
+        // Background services
+        services.AddHostedService<ExpiredBloodBagService>();
+        services.AddLogging(logging => logging.AddConsole());
 
     }
 }

@@ -2,6 +2,7 @@ using BDSS.DTOs;
 using BDSS.DTOs.BloodExport;
 using BDSS.Repositories.BloodExportRepository;
 using BDSS.Repositories.BloodRequestApplicationRepository;
+using BDSS.Repositories.BloodBagRepository;
 
 namespace BDSS.Services.BloodExport;
 
@@ -9,10 +10,12 @@ public class BloodExportService : IBloodExportService
 {
     private readonly IBloodExportRepository _bloodExportRepository;
     private readonly IBloodRequestApplicationRepository _bloodRequestApplicationRepository;
-    public BloodExportService(IBloodExportRepository bloodExportRepository, IBloodRequestApplicationRepository bloodRequestApplicationRepository)
+    private readonly IBloodBagRepository _bloodBagRepository;
+    public BloodExportService(IBloodExportRepository bloodExportRepository, IBloodRequestApplicationRepository bloodRequestApplicationRepository, IBloodBagRepository bloodBagRepository)
     {
         _bloodExportRepository = bloodExportRepository;
         _bloodRequestApplicationRepository = bloodRequestApplicationRepository;
+        _bloodBagRepository = bloodBagRepository;
     }
 
     public async Task<BaseResponseModel<GetAllBloodExportsResponse>> GetAllBloodExportsAsync()
@@ -70,12 +73,16 @@ public class BloodExportService : IBloodExportService
     {
         try
         {
-            var existingRequestApp = await _bloodRequestApplicationRepository.FindAsync(request.BloodRequestApplicationId.Value);
-            if (existingRequestApp == null)
-                return new BaseResponseModel<BloodExportDto> { Code = 404, Message = "BloodRequestApplication not found" };
+            var bloodBag = await _bloodBagRepository.FindAsync(request.BloodBagId);
+            if (bloodBag == null)
+                return new BaseResponseModel<BloodExportDto> { Code = 404, Message = "BloodBag not found" };
+            if (bloodBag.Status != BDSS.Common.Enums.BloodBagStatus.Available)
+                return new BaseResponseModel<BloodExportDto> { Code = 400, Message = "BloodBag is not available" };
+            bloodBag.Status = BDSS.Common.Enums.BloodBagStatus.Exported;
+            await _bloodBagRepository.UpdateAsync(bloodBag);
             var bloodExport = new Models.Entities.BloodExport
             {
-                BloodBagId = existingRequestApp.BloodBagId.Value,
+                BloodBagId = request.BloodBagId,
                 BloodRequestApplicationId = request.BloodRequestApplicationId,
                 Note = request.Note
             };

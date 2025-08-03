@@ -15,7 +15,7 @@ namespace BDSS.Models.Entities
         public DateOnly DonationStartDate { get; set; } = DateOnly.FromDateTime(DateTimeUtils.GetCurrentGmtPlus7());
         public DateOnly DonationEndDate { get; set; } = DateOnly.MinValue;
         public BloodType BloodType { get; set; } = BloodType.O_Positive;
-        public BloodDonationStatus Status { get; set; } = BloodDonationStatus.Pending;
+        public BloodDonationStatus Status { get; set; }
         public BloodTransferType BloodTransferType { get; set; } = BloodTransferType.WholeBlood;
         public int Quantity { get; set; } = 0;
         public string Note { get; set; } = string.Empty;

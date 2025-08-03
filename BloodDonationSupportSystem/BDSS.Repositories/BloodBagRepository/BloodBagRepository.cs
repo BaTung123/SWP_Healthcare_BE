@@ -3,6 +3,7 @@ using BDSS.Models.Entities;
 using BDSS.Repositories.GenericRepository;
 using BDSS.Common.Enums;
 using Microsoft.EntityFrameworkCore;
+using BDSS.Common.Utils;
 
 namespace BDSS.Repositories.BloodBagRepository;
 
@@ -29,7 +30,7 @@ public class BloodBagRepository : GenericRepository<BloodBag>, IBloodBagReposito
     public async Task<IEnumerable<BloodBag>> GetExpiredBloodBagsAsync()
     {
         return await _context.BloodBags
-            .Where(bb => bb.ExpiryDate <= DateTime.UtcNow)
+            .Where(bb => bb.ExpiryDate <= DateTimeUtils.GetCurrentGmtPlus7())
             .ToListAsync();
     }
-} 
+}
