@@ -71,7 +71,7 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
                     return new BaseResponseModel<BloodDonationApplicationDto>
                     {
                         Code = 400,
-                        Message = $"You must wait at least 3 months between donations. Your last donation was on {lastApplication.DonationEndDate:yyyy-MM-dd}."
+                        Message = $"Ban phai doi it nhat 3 thang giua cac lan quyen gop. Lan quyen gop gan nhat cua ban la vao ngay {lastApplication.DonationEndDate:dd-MM-yyyy}."
                     };
                 }
             }
