@@ -16,6 +16,7 @@ public class BloodExportDto
 public class CreateBloodExportRequest
 {
     public long? BloodRequestApplicationId { get; set; }
+    public long BloodBagId { get; set; }
     public string Note { get; set; } = string.Empty;
 }
 

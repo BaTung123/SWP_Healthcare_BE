@@ -48,15 +48,9 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
         {
             return new BaseResponseModel<BloodRequestApplicationDto> { Code = 400, Message = "FullName and Quantity are required." };
         }
-        var bloodBags = await _bloodBagRepository.GetBloodBagsByBloodTypeAsync(request.BloodType);
-        var availableBloodBag = bloodBags.FirstOrDefault(bb => bb.Status == BloodBagStatus.Available);
-        if (availableBloodBag == null)
-        {
-            return new BaseResponseModel<BloodRequestApplicationDto> { Code = 404, Message = "No available blood bag found for this blood type" };
-        }
         var entity = new BDSS.Models.Entities.BloodRequestApplication
         {
-            BloodBagId = availableBloodBag.Id,
+            BloodBagId = null,
             FullName = request.FullName,
             Dob = request.Dob,
             Gender = request.Gender,
@@ -104,7 +98,7 @@ public class BloodRequestApplicationService : IBloodRequestApplicationService
                 bloodExport.Status = BloodExportStatus.Exported;
                 await _bloodExportRepository.UpdateAsync(bloodExport);
 
-                bloodBag.Quantity -= bloodRequestApp.Quantity;
+                bloodBag.Status = BloodBagStatus.Exported;
                 await _bloodBagRepository.UpdateAsync(bloodBag);
             }
             await _repository.UpdateAsync(bloodRequestApp);

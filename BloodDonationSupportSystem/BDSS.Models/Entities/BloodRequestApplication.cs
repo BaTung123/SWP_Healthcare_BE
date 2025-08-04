@@ -12,7 +12,7 @@ namespace BDSS.Models.Entities
         public string RequestReason { get; set; } = string.Empty;
         public BloodType BloodType { get; set; } = BloodType.O_Positive;
         public BloodTransferType BloodTransferType { get; set; } = BloodTransferType.WholeBlood;
-        public BloodRequestStatus Status { get; set; } = BloodRequestStatus.Pending;
+        public BloodRequestStatus Status { get; set; }
         public int Quantity { get; set; } = 0;
         public string Note { get; set; } = string.Empty;
         public bool IsUrged { get; set; } = false;

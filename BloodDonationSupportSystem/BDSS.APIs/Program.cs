@@ -5,11 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-ServiceConfig.Configure(builder.Services);
+ServiceConfig.Configure(builder.Services, builder.Configuration);
 RepositoryConfig.Configure(builder.Services);
 AuthConfig.Configure(builder.Services, builder.Configuration);
 DocumentationConfig.Configure(builder.Services);
@@ -40,5 +39,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Verify background services are running
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("🚀 Application starting - background services will start automatically");
 
 app.Run();

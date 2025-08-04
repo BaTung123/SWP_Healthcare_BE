@@ -51,15 +51,7 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
     }
 
     public async Task<BaseResponseModel<BloodDonationApplicationDto>> CreateBloodDonationApplicationAsync(CreateBloodDonationApplicationRequest request)
-    {
-        var bloodBags = await _bloodBagRepository.GetBloodBagsByBloodTypeAsync(request.BloodType);
-        var availableBloodBag = bloodBags.FirstOrDefault(bb => bb.Status == BloodBagStatus.Available);
-        if (availableBloodBag == null)
-        {
-            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "No available blood bag found for this blood type" };
-        }
-
-        // Check if user has a previous donation within the last 3 months
+    {// Check if user has a previous donation within the last 3 months
         if (request.UserId.HasValue)
         {
             var lastApplication = await _repository.GetLatestByUserIdAsync(request.UserId.Value);
@@ -71,7 +63,7 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
                     return new BaseResponseModel<BloodDonationApplicationDto>
                     {
                         Code = 400,
-                        Message = $"You must wait at least 3 months between donations. Your last donation was on {lastApplication.DonationEndDate:yyyy-MM-dd}."
+                        Message = $"Ban phai doi it nhat 3 thang giua cac lan quyen gop. Lan quyen gop gan nhat cua ban la vao ngay {lastApplication.DonationEndDate:dd-MM-yyyy}."
                     };
                 }
             }
@@ -90,7 +82,7 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
 
         var entity = new BDSS.Models.Entities.BloodDonationApplication
         {
-            BloodBagId = availableBloodBag.Id,
+            BloodBagId = null,
             UserId = request.UserId,
             EventId = request.EventId,
             FullName = request.FullName,
@@ -130,18 +122,18 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
 
     public async Task<BaseResponseModel<BloodDonationApplicationDto>> UpdateBloodDonationApplicationAsync(UpdateBloodDonationApplicationRequest request)
     {
-        var bloodBags = await _bloodBagRepository.GetBloodBagsByBloodTypeAsync(request.BloodType);
-        var availableBloodBag = bloodBags.FirstOrDefault(bb => bb.Status == BloodBagStatus.Available);
-        if (availableBloodBag == null)
-        {
-            return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "No available blood bag found for this blood type" };
-        }
+        //var bloodBags = await _bloodBagRepository.GetBloodBagsByBloodTypeAsync(request.BloodType);
+        //var availableBloodBag = bloodBags.FirstOrDefault(bb => bb.Status == BloodBagStatus.Available);
+        //if (availableBloodBag == null)
+        //{
+        //    return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "No available blood bag found for this blood type" };
+        //}
         var entity = await _repository.FindAsync(request.Id);
         if (entity == null)
         {
             return new BaseResponseModel<BloodDonationApplicationDto> { Code = 404, Message = "Not found" };
         }
-        entity.BloodBagId = availableBloodBag.Id;
+        //entity.BloodBagId = availableBloodBag.Id;
         entity.BloodType = request.BloodType;
         entity.BloodTransferType = request.BloodTransferType;
         entity.Quantity = request.Quantity.Value;
@@ -174,7 +166,7 @@ public class BloodDonationApplicationService : IBloodDonationApplicationService
     private static bool IsValidStatusTransition(BDSS.Common.Enums.BloodDonationStatus current, BDSS.Common.Enums.BloodDonationStatus next)
     {
         return (current == BDSS.Common.Enums.BloodDonationStatus.Pending && (next == BDSS.Common.Enums.BloodDonationStatus.Accepted || next == BDSS.Common.Enums.BloodDonationStatus.Denied))
-            || (current == BDSS.Common.Enums.BloodDonationStatus.Accepted && next == BDSS.Common.Enums.BloodDonationStatus.Donated)
+            || (current == BDSS.Common.Enums.BloodDonationStatus.Accepted && (next == BDSS.Common.Enums.BloodDonationStatus.Donated || next == BDSS.Common.Enums.BloodDonationStatus.Denied))
             || (current == next && (current == BDSS.Common.Enums.BloodDonationStatus.Donated || current == BDSS.Common.Enums.BloodDonationStatus.Denied));
     }
 }
